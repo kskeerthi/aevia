@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aevia — Your whole health, in one place.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F1EC;--surface:#FBFBF8;--surface-2:#F4F4EF;
+    --text:#14161B;--text-2:#585E6A;--text-3:#8A8F99;
+    --line:rgba(20,22,27,.10);--line-2:rgba(20,22,27,.05);
+    --night:#0A0B12;--night-2:#12141F;
+    --brand:#3D38EA;--brand-2:#635DFF;--brand-soft:rgba(61,56,234,.10);
+    --vital:#12A66B;--vital-soft:rgba(18,166,107,.12);
+    --watch:#C8871F;--watch-soft:rgba(200,135,31,.14);
+    --alert:#DB5240;--alert-soft:rgba(219,82,64,.12);
+    --disp:'Instrument Serif',Georgia,serif;--sans:'Space Grotesk',system-ui,sans-serif;
+    --r:14px;--pad:22px;
+    --sh1:0 1px 2px rgba(20,22,27,.06);--sh2:0 8px 24px rgba(20,22,27,.08);--sh3:0 24px 60px rgba(20,22,27,.12);
+  }
+  [data-theme="dark"]{
+    --bg:#0A0B12;--surface:#12141F;--surface-2:#191C29;
+    --text:#F1F1EC;--text-2:#A2A7B2;--text-3:#6B7180;
+    --line:rgba(255,255,255,.10);--line-2:rgba(255,255,255,.06);
+    --brand:#635DFF;--brand-2:#4B45F0;--brand-soft:rgba(99,93,255,.16);
+    --vital:#2FD39A;--vital-soft:rgba(47,211,154,.16);
+    --watch:#F2BA54;--watch-soft:rgba(242,186,84,.16);
+    --alert:#FF7A68;--alert-soft:rgba(255,122,104,.16);
+    --sh1:0 1px 2px rgba(0,0,0,.3);--sh2:0 8px 24px rgba(0,0,0,.4);--sh3:0 24px 60px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.58;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
+  a{color:inherit;text-decoration:none;} button{font-family:inherit;}
+  ::selection{background:var(--brand);color:#fff;}
+  :focus-visible{outline:2.5px solid var(--brand);outline-offset:3px;border-radius:6px;}
+  .hidden{display:none!important;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 30px;}
+  @media(max-width:640px){.wrap{padding:0 18px;}}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+  .nav-in{max-width:1180px;margin:0 auto;padding:12px 30px;display:flex;align-items:center;gap:16px;}
+  .brand{display:flex;align-items:center;gap:10px;background:none;border:none;color:var(--text);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:.92rem;cursor:pointer;}
+  .brand svg{width:22px;height:22px;color:var(--brand);}
+  .routes{display:flex;gap:3px;margin-left:8px;}
+  .rbtn{background:none;border:none;color:var(--text-2);font:inherit;font-size:.9rem;font-weight:500;padding:8px 14px;border-radius:100px;cursor:pointer;transition:.2s;}
+  .rbtn:hover{color:var(--text);} .rbtn.active{background:var(--brand);color:#fff;}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+  .cta{background:var(--brand);color:#fff;border:none;border-radius:100px;padding:9px 18px;font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;}
+  .tbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none;}
+  .tbtn svg{width:18px;height:18px;}
+  @media(max-width:860px){.routes .rbtn{padding:8px 9px;font-size:.8rem;} .cta{display:none;} .nav-in{padding:12px 16px;gap:8px;}}
+
+  .view{display:none;} .view.active{display:block;animation:vin .5s cubic-bezier(.16,1,.3,1);}
+  @keyframes vin{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  section{padding:92px 0;}
+  .eyebrow{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);font-weight:600;margin:0 0 16px;}
+  h2{font-family:var(--disp);font-weight:400;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1.06;letter-spacing:-.01em;margin:0 0 18px;max-width:20ch;}
+  h2 em{font-style:italic;color:var(--brand);}
+  .lead{font-size:1.12rem;color:var(--text-2);max-width:56ch;margin:0;}
+
+  /* hero */
+  .hero{position:relative;background:var(--night);color:#F3F3F0;overflow:hidden;padding:92px 0 110px;}
+  .hero::before{content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(99,93,255,.34),transparent 62%);pointer-events:none;}
+  .hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:26px 26px;opacity:.6;pointer-events:none;}
+  .hero-in{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center;}
+  @media(max-width:900px){.hero-in{grid-template-columns:1fr;gap:40px;}}
+  .kick{display:inline-flex;align-items:center;gap:8px;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2);border:1px solid rgba(99,93,255,.35);border-radius:100px;padding:6px 14px;margin-bottom:24px;}
+  .kick .p{width:7px;height:7px;border-radius:50%;background:var(--brand-2);animation:pulse 2.2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(99,93,255,.5);}70%{box-shadow:0 0 0 10px rgba(99,93,255,0);}100%{box-shadow:0 0 0 0 rgba(99,93,255,0);}}
+  h1{font-family:var(--disp);font-weight:400;font-size:clamp(2.8rem,6.2vw,5.2rem);line-height:1.02;letter-spacing:-.01em;margin:0 0 20px;}
+  h1 em{font-style:italic;color:var(--brand-2);}
+  .hero .sub{font-size:clamp(1.05rem,1.5vw,1.25rem);color:rgba(243,243,240,.72);max-width:46ch;margin:0 0 30px;}
+  .hcta{display:flex;gap:14px;flex-wrap:wrap;}
+  .bp{background:var(--brand);color:#fff;border:none;border-radius:100px;padding:15px 30px;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 8px 30px rgba(61,56,234,.4);transition:transform .2s;}
+  .bp:hover{transform:translateY(-2px);}
+  .bg2{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:100px;padding:15px 26px;font-weight:600;font-size:1rem;cursor:pointer;}
+  .hmeta{margin-top:30px;display:flex;gap:24px;flex-wrap:wrap;font-size:.85rem;color:rgba(243,243,240,.5);}
+  .ringwrap{display:flex;align-items:center;justify-content:center;position:relative;}
+  .ring{width:min(320px,78vw);height:min(320px,78vw);transform:rotate(-90deg);}
+  .ring .t{fill:none;stroke:rgba(255,255,255,.09);stroke-width:10;}
+  .ring .v{fill:none;stroke:url(#g);stroke-width:10;stroke-linecap:round;stroke-dasharray:540;stroke-dashoffset:540;transition:stroke-dashoffset 1.7s cubic-bezier(.16,1,.3,1);}
+  .ring.go .v{stroke-dashoffset:97;}
+  .rc{position:absolute;text-align:center;}
+  .rc .l{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(243,243,240,.5);}
+  .rc .s{font-family:var(--disp);font-size:4.6rem;line-height:1;margin:2px 0;}
+  .rc .u{color:var(--brand-2);font-weight:500;font-size:.9rem;}
+
+  /* pillars */
+  .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:52px;}
+  @media(max-width:900px){.pillars{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.pillars{grid-template-columns:1fr;}}
+  .pill-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .3s,box-shadow .3s;cursor:pointer;}
+  .pill-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(20,22,27,.09);}
+  .pic{width:42px;height:42px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .pic svg{width:22px;height:22px;}
+  .pill-card h3{font-family:var(--disp);font-weight:400;font-size:1.4rem;margin:0 0 6px;}
+  .pill-card p{margin:0;color:var(--text-2);font-size:.92rem;}
+  .pill-card .go{margin-top:14px;font-size:.82rem;font-weight:600;color:var(--brand);}
+
+  /* stitched flow */
+  .stitch{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .flow{display:flex;gap:0;flex-wrap:wrap;margin-top:44px;align-items:stretch;}
+  .fstep{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:20px;position:relative;margin:0 6px 12px;}
+  .fstep .n{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:600;}
+  .fstep b{display:block;font-family:var(--disp);font-weight:400;font-size:1.2rem;margin:6px 0;}
+  .fstep p{margin:0;color:var(--text-2);font-size:.86rem;}
+  .fstep .arrow{position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:1.2rem;z-index:1;}
+  @media(max-width:760px){.fstep .arrow{display:none;}}
+
+  /* labs preview */
+  .panelbox{margin-top:40px;background:var(--night);border-radius:22px;padding:26px;color:#F3F3F0;}
+  .pb-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px;}
+  .pb-top b{font-family:var(--disp);font-size:1.4rem;font-weight:400;}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;}
+  .filter{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(243,243,240,.75);border-radius:100px;padding:6px 13px;font-size:.82rem;font-weight:500;cursor:pointer;}
+  .filter.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+
+  /* biomarker card (shared) */
+  .bm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+  @media(max-width:860px){.bm-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.bm-grid{grid-template-columns:1fr;}}
+  .bm{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:15px;overflow:hidden;}
+  .dash-panel .bm{background:var(--surface);border-color:var(--line);}
+  .bmh{width:100%;text-align:left;background:none;border:none;color:inherit;cursor:pointer;padding:16px;display:block;}
+  .bm .cat{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.5;}
+  .bm .nm{font-weight:600;margin:3px 0 10px;display:flex;justify-content:space-between;gap:8px;align-items:center;}
+  .pill2{font-size:.66rem;font-weight:700;border-radius:100px;padding:3px 9px;white-space:nowrap;}
+  .pill2.optimal{background:var(--vital-soft);color:var(--vital);}
+  .pill2.watch{background:var(--watch-soft);color:var(--watch);}
+  .pill2.attention{background:var(--alert-soft);color:var(--alert);}
+  .bm .v{font-family:var(--disp);font-size:1.75rem;line-height:1;}
+  .bm .v small{font-family:var(--sans);font-size:.72rem;opacity:.5;margin-left:3px;}
+  .bm .rb{margin-top:11px;height:6px;border-radius:100px;background:rgba(255,255,255,.12);position:relative;}
+  .dash-panel .bm .rb{background:var(--line);}
+  .bm .rz{position:absolute;top:0;bottom:0;background:var(--vital-soft);border-radius:100px;}
+  .bm .rm{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);}
+  .bm .trend{margin-top:9px;font-size:.76rem;opacity:.55;}
+  .bm-more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.16,1,.3,1);}
+  .bm-more-in{overflow:hidden;} .bm.open .bm-more{grid-template-rows:1fr;}
+  .bm-more-pad{padding:0 16px 16px;}
+  .bm-more-pad p{font-size:.85rem;opacity:.8;line-height:1.5;margin:11px 0;border-top:1px solid rgba(255,255,255,.1);padding-top:11px;}
+  .dash-panel .bm-more-pad p{border-color:var(--line);}
+  .bm-act{background:var(--brand-soft);border:1px solid var(--brand);border-radius:10px;padding:10px 12px;font-size:.83rem;}
+
+  /* pricing */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px;}
+  @media(max-width:860px){.plans{grid-template-columns:1fr;}}
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px;position:relative;transition:transform .3s,box-shadow .3s;}
+  .plan:hover{transform:translateY(-4px);box-shadow:0 22px 56px rgba(20,22,27,.1);}
+  .plan.feat{background:var(--night);color:#F3F3F0;border-color:var(--night);}
+  .plan .tg{position:absolute;top:-11px;left:28px;background:var(--brand);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:100px;}
+  .plan h3{font-family:var(--disp);font-weight:400;font-size:1.5rem;margin:0 0 6px;}
+  .plan .pr{font-family:var(--disp);font-size:2.8rem;line-height:1;margin:12px 0 2px;}
+  .plan .pr small{font-family:var(--sans);font-size:.9rem;color:var(--text-3);}
+  .plan.feat .pr small{color:rgba(243,243,240,.5);}
+  .plan .per{color:var(--text-2);font-size:.88rem;margin-bottom:20px;}
+  .plan.feat .per{color:rgba(243,243,240,.6);}
+  .plan ul{list-style:none;padding:0;margin:0 0 24px;}
+  .plan li{padding:9px 0;border-top:1px solid var(--line);font-size:.92rem;display:flex;gap:10px;}
+  .plan.feat li{border-color:rgba(255,255,255,.12);}
+  .plan li .ck{color:var(--vital);flex:none;}
+  .plan.feat li .ck{color:#3dd99b;}
+  .pbtn{width:100%;border-radius:100px;padding:13px;font-weight:600;font-size:.94rem;cursor:pointer;border:1.5px solid var(--text);background:transparent;color:var(--text);transition:.2s;}
+  .pbtn:hover{background:var(--text);color:var(--bg);}
+  .plan.feat .pbtn{background:var(--brand);border-color:var(--brand);color:#fff;}
+
+  /* cta + footer */
+  .ctab{background:var(--night);color:#F3F3F0;text-align:center;}
+  .ctab h2{color:#fff;margin:0 auto 18px;} .ctab .lead{color:rgba(243,243,240,.66);margin:0 auto 30px;}
+  footer{background:var(--night);color:rgba(243,243,240,.5);padding:38px 0;}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.85rem;}
+  .foot .brand{color:rgba(243,243,240,.85);}
+  .fnote{font-size:.74rem;color:rgba(243,243,240,.32);max-width:64ch;margin-top:14px;}
+
+  /* ===== DASHBOARD ===== */
+  .dash{padding:32px 0 80px;}
+  .greet{font-family:var(--disp);font-weight:400;font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.05;margin:0 0 4px;}
+  .greet em{font-style:italic;color:var(--brand);}
+  .dsub{color:var(--text-2);margin:0 0 24px;}
+  .dtabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:14px;}
+  .dtab{background:none;border:none;color:var(--text-2);font:inherit;font-size:.92rem;font-weight:500;padding:8px 14px;border-radius:100px;cursor:pointer;transition:.2s;}
+  .dtab:hover{color:var(--text);} .dtab.active{background:var(--brand);color:#fff;}
+  .dash-panel{display:none;} .dash-panel.active{display:block;animation:vin .45s cubic-bezier(.16,1,.3,1);}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;}
+  .ch{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;}
+  .ch h3{font-weight:600;font-size:1rem;margin:0;} .ch .m{font-size:.8rem;color:var(--text-3);}
+  .grid2{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;} @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;} @media(max-width:820px){.grid3{grid-template-columns:1fr;}}
+  .stack{display:grid;gap:16px;}
+
+  .scorecard{display:flex;gap:24px;align-items:center;} @media(max-width:520px){.scorecard{flex-direction:column;text-align:center;}}
+  .dring{width:140px;height:140px;flex:none;transform:rotate(-90deg);}
+  .dring .t{fill:none;stroke:var(--line);stroke-width:11;}
+  .dring .v{fill:none;stroke:url(#g2);stroke-width:11;stroke-linecap:round;stroke-dasharray:427;stroke-dashoffset:427;transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1);}
+  .dring.go .v{stroke-dashoffset:77;}
+  .snum{font-family:var(--disp);font-size:3rem;line-height:1;}
+  .delta{display:inline-flex;gap:6px;align-items:center;font-size:.84rem;font-weight:600;color:var(--vital);background:var(--vital-soft);border-radius:100px;padding:4px 11px;margin-top:8px;}
+
+  .quick{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .qc{background:var(--surface-2);border:1px solid var(--line-2);border-radius:14px;padding:15px;cursor:pointer;transition:border-color .2s;}
+  .qc:hover{border-color:var(--brand);}
+  .qc .ql{font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;}
+  .qc .qv{font-weight:600;margin-top:4px;font-size:.98rem;}
+  .qc .qm{font-size:.8rem;color:var(--text-2);margin-top:2px;}
+
+  .row-item{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line);}
+  .row-item:first-child{border-top:none;}
+  .ri-main{flex:1;} .ri-main b{font-weight:600;} .ri-main span{display:block;color:var(--text-2);font-size:.85rem;margin-top:1px;}
+  .ri-right{text-align:right;} .ri-right .amt{font-family:var(--disp);font-size:1.2rem;}
+  .tag{font-size:.68rem;font-weight:700;border-radius:100px;padding:4px 10px;}
+  .tag.ok{background:var(--vital-soft);color:var(--vital);} .tag.proc{background:var(--watch-soft);color:var(--watch);} .tag.due{background:var(--brand-soft);color:var(--brand);}
+  .mini-btn{background:var(--brand);color:#fff;border:none;border-radius:100px;padding:8px 15px;font:inherit;font-weight:600;font-size:.82rem;cursor:pointer;}
+  .mini-btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--text);}
+  .mini-btn.done{background:var(--vital-soft);color:var(--vital);cursor:default;}
+
+  .prog{height:9px;border-radius:100px;background:var(--line);overflow:hidden;margin:10px 0 6px;}
+  .prog .f{height:100%;background:var(--brand);border-radius:100px;}
+
+  .plan-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);}
+  .plan-item:first-child{border-top:none;}
+  .check{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);background:none;cursor:pointer;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;transition:.2s;}
+  .check.done{background:var(--vital);border-color:var(--vital);} .check svg{width:13px;height:13px;opacity:0;} .check.done svg{opacity:1;}
+  .plan-body b{font-weight:600;} .plan-body.done b{text-decoration:line-through;color:var(--text-3);}
+  .plan-body p{margin:3px 0 0;color:var(--text-2);font-size:.86rem;}
+  .impact{font-size:.66rem;font-weight:700;border-radius:100px;padding:3px 9px;margin-left:8px;}
+  .impact.high{background:var(--alert-soft);color:var(--alert);} .impact.med{background:var(--watch-soft);color:var(--watch);}
+
+  .chart{width:100%;height:auto;display:block;overflow:visible;}
+  .chart .g line{stroke:var(--line-2);}
+  .chart .area{fill:url(#area);} .chart .lp{fill:none;stroke:var(--brand);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .chart .dot{fill:var(--surface);stroke:var(--brand);stroke-width:2.5;cursor:pointer;transition:r .15s;} .chart .dot:hover{r:7;}
+  .chart .xl{fill:var(--text-3);font-size:11px;font-family:var(--sans);}
+  .cw{position:relative;} .tt{position:absolute;pointer-events:none;background:var(--text);color:var(--bg);font-size:.76rem;font-weight:600;padding:5px 9px;border-radius:7px;transform:translate(-50%,-130%);opacity:0;transition:opacity .15s;white-space:nowrap;} .tt.show{opacity:1;}
+
+  .msg-input{display:flex;gap:8px;margin-top:12px;}
+  .msg-input input{flex:1;border:1.5px solid var(--line);border-radius:100px;padding:11px 15px;font:inherit;font-size:.9rem;background:var(--bg);color:var(--text);}
+  .msg-input input:focus{outline:none;border-color:var(--brand);}
+
+  /* ===== DESIGN SYSTEM ===== */
+  .dsys{padding:78px 0;}
+  .ds-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px;}
+  .ds-lab{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin:0 0 16px;}
+  .sw{display:inline-block;width:96px;margin:0 16px 22px 0;vertical-align:top;}
+  .sw .c{height:64px;border-radius:12px;border:1px solid var(--line);}
+  .sw b{display:block;font-size:.82rem;margin-top:8px;} .sw span{font-size:.72rem;color:var(--text-3);}
+  .ds-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .db{border-radius:100px;padding:10px 20px;font-weight:600;font-size:.85rem;border:1.5px solid transparent;cursor:pointer;}
+  .db.pri{background:var(--brand);color:#fff;} .db.sec{border-color:var(--text);color:var(--text);background:transparent;} .db.foc{background:var(--brand);color:#fff;outline:2.5px solid var(--brand-2);outline-offset:2px;}
+  .plist{display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;} @media(max-width:640px){.plist{grid-template-columns:1fr;}}
+  .plist h4{font-weight:600;margin:0 0 4px;} .plist p{margin:0;color:var(--text-2);font-size:.92rem;}
+  .tyrow{border-top:1px solid var(--line);padding:16px 0;display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:baseline;} .tyrow:first-of-type{border-top:none;} .tyrow .m{font-size:.76rem;color:var(--text-3);}
+
+  /* modal */
+  .mov{position:fixed;inset:0;background:rgba(10,11,18,.62);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .mov.open{opacity:1;pointer-events:auto;}
+  .modal{background:var(--surface);border-radius:20px;padding:32px;max-width:420px;width:100%;position:relative;transform:translateY(16px) scale(.98);transition:transform .35s cubic-bezier(.16,1,.3,1);box-shadow:0 30px 80px rgba(10,11,18,.42);}
+  .mov.open .modal{transform:none;}
+  .mx{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--bg);font-size:1.2rem;cursor:pointer;color:var(--text-2);}
+  .mk{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:600;margin:0 0 8px;}
+  .modal h3{font-family:var(--disp);font-weight:400;font-size:1.8rem;margin:0 0 8px;}
+  .modal p{color:var(--text-2);font-size:.94rem;margin:0 0 18px;}
+  .modal input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;font:inherit;margin-bottom:12px;background:var(--bg);color:var(--text);}
+  .modal input:focus{outline:none;border-color:var(--brand);}
+  .msub{width:100%;background:var(--brand);color:#fff;border:none;border-radius:100px;padding:13px;font-weight:600;cursor:pointer;}
+  .mfine{font-size:.76rem;color:var(--text-3);text-align:center;margin:12px 0 0;}
+  .mdone{text-align:center;} .mdone .tk{width:54px;height:54px;border-radius:50%;background:var(--vital-soft);color:var(--vital);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem;}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;} .ring .v,.dring .v{transition:none;} body{transition:none;} html{scroll-behavior:auto;}}
+
+  /* ===== chatbot ===== */
+  .fab{position:fixed;bottom:24px;right:24px;z-index:150;width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fff;border:none;cursor:pointer;box-shadow:0 12px 34px rgba(61,56,234,.45);display:flex;align-items:center;justify-content:center;transition:transform .25s,box-shadow .25s;}
+  .fab:hover{transform:translateY(-2px) scale(1.03);}
+  .fab svg{width:26px;height:26px;}
+  .fab .fdot{position:absolute;top:12px;right:12px;width:10px;height:10px;border-radius:50%;background:#3dd99b;border:2px solid var(--brand);}
+  .fab.hidden{display:none;}
+  .chatw{position:fixed;bottom:24px;right:24px;z-index:151;width:min(380px,calc(100vw - 32px));height:min(600px,calc(100vh - 48px));background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px rgba(10,11,18,.4);display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(20px) scale(.98);transform-origin:bottom right;transition:opacity .28s cubic-bezier(.16,1,.3,1),transform .28s cubic-bezier(.16,1,.3,1);}
+  .chatw.open{opacity:1;pointer-events:auto;transform:none;}
+  .chead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:var(--night);color:#F3F3F0;}
+  .chead .cav{width:38px;height:38px;border-radius:12px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;}
+  .chead .cav svg{width:20px;height:20px;}
+  .chead b{font-family:var(--disp);font-weight:400;font-size:1.15rem;display:block;line-height:1.1;}
+  .chead span{font-size:.76rem;color:rgba(243,243,240,.6);display:flex;align-items:center;gap:6px;}
+  .chead span .d{width:7px;height:7px;border-radius:50%;background:#3dd99b;}
+  .chead .cx{margin-left:auto;background:none;border:none;color:rgba(243,243,240,.7);font-size:1.4rem;cursor:pointer;line-height:1;}
+  .cbody{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;}
+  .cmsg{max-width:86%;padding:11px 14px;font-size:.9rem;line-height:1.5;border-radius:15px;}
+  .cmsg.bot{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line-2);border-bottom-left-radius:5px;}
+  .cmsg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:5px;}
+  .csrc{margin-top:8px;font-size:.7rem;font-weight:600;color:var(--brand);background:var(--brand-soft);display:inline-block;padding:3px 9px;border-radius:100px;}
+  .ctype{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line-2);border-radius:15px;border-bottom-left-radius:5px;padding:13px 15px;display:flex;gap:5px;}
+  .ctype span{width:7px;height:7px;border-radius:50%;background:var(--text-3);animation:blink 1.2s infinite;}
+  .ctype span:nth-child(2){animation-delay:.2s;} .ctype span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+  .cchips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 12px;}
+  .cchip{background:var(--bg);border:1px solid var(--line);color:var(--text);font:inherit;font-size:.8rem;font-weight:500;padding:8px 12px;border-radius:100px;cursor:pointer;transition:border-color .2s,color .2s;}
+  .cchip:hover{border-color:var(--brand);color:var(--brand);}
+  .cfoot{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;}
+  .cfoot input{flex:1;border:1.5px solid var(--line);border-radius:100px;padding:11px 15px;font:inherit;font-size:.9rem;background:var(--bg);color:var(--text);}
+  .cfoot input:focus{outline:none;border-color:var(--brand);}
+  .csend{width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;border:none;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;}
+  .csend svg{width:18px;height:18px;}
+  @media(max-width:520px){.fab{bottom:16px;right:16px;} .chatw{bottom:14px;right:12px;left:12px;width:auto;height:min(72vh,520px);border-radius:18px;}}
+
+  /* video call */
+  .callov{position:fixed;inset:0;z-index:220;background:rgba(6,7,12,.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .callov.open{opacity:1;pointer-events:auto;}
+  .callwin{width:min(760px,100%);height:min(560px,92vh);background:#0E1018;border:1px solid rgba(255,255,255,.12);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 100px rgba(0,0,0,.6);transform:scale(.97);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+  .callov.open .callwin{transform:none;}
+  .ctop{padding:13px 18px;display:flex;align-items:center;gap:10px;color:#F3F3F0;border-bottom:1px solid rgba(255,255,255,.08);}
+  .ctop .cbrand{font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.74rem;color:rgba(243,243,240,.65);display:flex;align-items:center;gap:8px;}
+  .ctop .cbrand svg{width:16px;height:16px;color:var(--brand-2);}
+  .ctop .ctimer{margin-left:auto;font-variant-numeric:tabular-nums;font-size:.82rem;color:rgba(243,243,240,.6);}
+  .cstage{flex:1;position:relative;background:radial-gradient(circle at 50% 38%,#1a1d2e,#0b0d16);display:flex;align-items:center;justify-content:center;}
+  .docvid{text-align:center;color:#F3F3F0;}
+  .davatar{width:118px;height:118px;border-radius:50%;background:linear-gradient(145deg,#635DFF,#3D38EA);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:3rem;margin:0 auto 16px;box-shadow:0 0 0 8px rgba(99,93,255,.12);}
+  .dname{font-size:1.3rem;font-weight:600;}
+  .dstat{font-size:.85rem;color:rgba(243,243,240,.55);margin-top:5px;display:flex;align-items:center;gap:7px;justify-content:center;}
+  .dstat .live{width:8px;height:8px;border-radius:50%;background:#3dd99b;animation:cpulse 1.6s infinite;}
+  @keyframes cpulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+  .selfvid{position:absolute;bottom:16px;right:16px;width:120px;height:82px;border-radius:12px;background:linear-gradient(145deg,#2a2d3d,#171a26);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;color:rgba(243,243,240,.7);font-size:.78rem;font-weight:600;}
+  .cctrl{padding:16px;display:flex;gap:13px;justify-content:center;background:#0b0d16;border-top:1px solid rgba(255,255,255,.08);}
+  .cctl{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#F3F3F0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+  .cctl:hover{background:rgba(255,255,255,.12);}
+  .cctl.off{background:rgba(255,255,255,.9);color:#0b0d16;border-color:transparent;}
+  .cctl svg{width:22px;height:22px;}
+  .cctl.end{background:#E5484D;border-color:#E5484D;color:#fff;width:60px;}
+  .cctl.end:hover{background:#d13b40;}
+  /* scheduler */
+  .schov{position:fixed;inset:0;z-index:210;background:rgba(10,11,18,.62);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .schov.open{opacity:1;pointer-events:auto;}
+  .schm{background:var(--surface);border-radius:20px;padding:26px;max-width:440px;width:100%;position:relative;transform:translateY(16px) scale(.98);transition:transform .35s cubic-bezier(.16,1,.3,1);box-shadow:0 30px 80px rgba(10,11,18,.42);max-height:92vh;overflow:auto;}
+  .schov.open .schm{transform:none;}
+  .schx{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--bg);font-size:1.2rem;cursor:pointer;color:var(--text-2);}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin:14px 0 12px;}
+  .cal-head b{font-family:var(--disp);font-weight:400;font-size:1.2rem;}
+  .cal-nav{background:var(--bg);border:1px solid var(--line);border-radius:9px;width:34px;height:34px;cursor:pointer;color:var(--text);font-size:1rem;}
+  .cal-nav:disabled{opacity:.35;cursor:not-allowed;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .cal-dow{font-size:.66rem;color:var(--text-3);text-align:center;padding:4px 0;font-weight:700;letter-spacing:.04em;}
+  .cal-day{aspect-ratio:1;border:none;background:none;border-radius:10px;font:inherit;font-size:.86rem;color:var(--text);cursor:pointer;transition:.15s;}
+  .cal-day:hover:not(:disabled){background:var(--brand-soft);color:var(--brand);}
+  .cal-day.sel{background:var(--brand);color:#fff;}
+  .cal-day.empty{visibility:hidden;pointer-events:none;}
+  .cal-day:disabled{color:var(--text-3);opacity:.35;cursor:not-allowed;}
+  .cal-day.today{box-shadow:inset 0 0 0 1.5px var(--brand);}
+  .slab{font-size:.72rem;color:var(--text-3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px;}
+  .times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .tslot{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 6px;font:inherit;font-size:.84rem;color:var(--text);cursor:pointer;transition:.15s;}
+  .tslot:hover{border-color:var(--brand);color:var(--brand);}
+  .tslot.sel{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .sconf{width:100%;margin-top:20px;background:var(--brand);color:#fff;border:none;border-radius:100px;padding:13px;font:inherit;font-weight:600;cursor:pointer;}
+  .sconf:disabled{opacity:.45;cursor:not-allowed;}
+  .sdone{text-align:center;padding:14px 4px;} .sdone .tk{width:56px;height:56px;border-radius:50%;background:var(--vital-soft);color:var(--vital);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;}
+
+@scope (#v-ds2){
+
+  
+  
+  
+  
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+  a{color:inherit;text-decoration:none;} button{font-family:inherit;}
+  ::selection{background:var(--brand);color:#fff;}
+  :focus-visible{outline:2.5px solid var(--brand);outline-offset:2px;border-radius:6px;}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px;}
+  @media(max-width:640px){.wrap{padding:0 16px;}}
+
+  /* topbar */
+  .top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+  .top-in{max-width:1240px;margin:0 auto;padding:13px 28px;display:flex;align-items:center;gap:14px;}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.88rem;}
+  .brand svg{width:20px;height:20px;color:var(--brand);}
+  .brand small{font-weight:500;letter-spacing:.02em;text-transform:none;color:var(--text-3);}
+  .top-right{margin-left:auto;display:flex;gap:12px;align-items:center;}
+  .tlink{font-size:.86rem;color:var(--text-2);} .tlink:hover{color:var(--text);}
+
+  /* white-label control bar */
+  .wl{position:sticky;top:53px;z-index:45;background:var(--surface);border-bottom:1px solid var(--line);}
+  .wl-in{max-width:1240px;margin:0 auto;padding:14px 28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;}
+  .wl-in .grp{display:flex;align-items:center;gap:8px;}
+  .wl-in .lbl{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:700;}
+  .sw{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;}
+  .sw.on{border-color:var(--text);}
+  .opt{border:1px solid var(--line);background:var(--bg);color:var(--text-2);font:inherit;font-size:.8rem;font-weight:600;padding:6px 11px;border-radius:100px;cursor:pointer;}
+  .opt.on{background:var(--brand);border-color:var(--brand);color:#fff;}
+  input[type=color]{width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer;padding:2px;}
+  @media(max-width:820px){.wl-in{gap:14px;} .wl-in .grp{gap:6px;}}
+
+  header.head{padding:52px 0 30px;}
+  .head h1{font-family:var(--disp);font-weight:400;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.03;letter-spacing:-.01em;margin:0 0 14px;}
+  .head p{font-size:1.08rem;color:var(--text-2);max-width:60ch;margin:0;}
+  .count{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:.82rem;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:6px 14px;border-radius:100px;}
+
+  .sec{padding:36px 0 8px;}
+  .sec-h{font-family:var(--disp);font-weight:400;font-size:1.9rem;margin:0 0 4px;}
+  .sec-sub{color:var(--text-3);font-size:.9rem;margin:0 0 22px;}
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+  .comp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--pad);min-width:0;}
+  .comp.wide{grid-column:span 2;} .comp.full{grid-column:1/-1;}
+  @media(max-width:680px){.comp.wide,.comp.full{grid-column:auto;}}
+  .cl{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);font-weight:700;margin:0 0 15px;display:flex;justify-content:space-between;gap:8px;}
+  .cl .n{color:var(--brand);}
+
+  /* ---- shared component styles ---- */
+  .btn{border-radius:100px;padding:10px 18px;font:inherit;font-weight:600;font-size:.86rem;border:1.5px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+  .btn.pri{background:var(--brand);color:#fff;} .btn.sec{border-color:var(--text);color:var(--text);background:transparent;}
+  .btn.ghost{background:var(--surface-2);color:var(--text);} .btn.dang{background:var(--alert);color:#fff;}
+  .btn.sm{padding:7px 13px;font-size:.78rem;} .btn.lg{padding:13px 24px;font-size:.95rem;}
+  .btn.dis{opacity:.45;cursor:not-allowed;} .btn svg{width:16px;height:16px;}
+  .iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
+  .iconbtn svg{width:18px;height:18px;}
+  .fab{width:52px;height:52px;border-radius:50%;background:var(--brand);color:#fff;border:none;cursor:pointer;box-shadow:var(--sh2);display:inline-flex;align-items:center;justify-content:center;}
+  .grp-btn{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .grp-btn button{border:none;background:var(--bg);color:var(--text);padding:8px 14px;font:inherit;font-size:.82rem;cursor:pointer;border-right:1px solid var(--line);}
+  .grp-btn button:last-child{border-right:none;} .grp-btn button.on{background:var(--brand);color:#fff;}
+
+  .field label{display:block;font-size:.8rem;font-weight:600;margin-bottom:6px;}
+  .field .help{font-size:.76rem;color:var(--text-3);margin-top:6px;}
+  .field .err{font-size:.76rem;color:var(--alert);margin-top:6px;}
+  .inp{width:100%;border:1.5px solid var(--line);border-radius:calc(var(--r) - 4px);padding:11px 13px;font:inherit;font-size:.9rem;background:var(--bg);color:var(--text);}
+  .inp:focus{outline:none;border-color:var(--brand);}
+  .inp.bad{border-color:var(--alert);}
+  textarea.inp{resize:vertical;min-height:70px;}
+  .inp-ic{position:relative;} .inp-ic svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-3);} .inp-ic .inp{padding-left:36px;}
+  .check,.radio{display:flex;align-items:center;gap:10px;font-size:.88rem;cursor:pointer;margin-bottom:8px;}
+  .check .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .check.on .box{background:var(--brand);border-color:var(--brand);} .check .box svg{width:12px;height:12px;opacity:0;} .check.on .box svg{opacity:1;}
+  .radio .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;}
+  .radio.on .dot{border-color:var(--brand);} .radio .dot i{width:10px;height:10px;border-radius:50%;background:var(--brand);opacity:0;} .radio.on .dot i{opacity:1;}
+  .switch{width:44px;height:26px;border-radius:100px;background:var(--line);border:none;cursor:pointer;position:relative;transition:background .2s;flex:none;}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:var(--sh1);}
+  .switch.on{background:var(--brand);} .switch.on::after{transform:translateX(18px);}
+  input[type=range].rng{width:100%;accent-color:var(--brand);}
+  .seg{display:inline-flex;background:var(--surface-2);border-radius:100px;padding:3px;}
+  .seg button{border:none;background:none;font:inherit;font-size:.82rem;font-weight:600;padding:7px 14px;border-radius:100px;cursor:pointer;color:var(--text-2);}
+  .seg button.on{background:var(--brand);color:#fff;}
+  .stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .stepper button{border:none;background:var(--bg);color:var(--text);width:38px;height:38px;font-size:1.1rem;cursor:pointer;} .stepper .val{width:48px;text-align:center;font-weight:600;}
+  .pin{display:flex;gap:8px;} .pin input{width:42px;height:48px;text-align:center;font-size:1.2rem;font-weight:600;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);} .pin input:focus{outline:none;border-color:var(--brand);}
+  .switchrow{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
+  .badge{font-size:.7rem;font-weight:700;border-radius:100px;padding:3px 9px;background:var(--brand-soft);color:var(--brand);}
+  .count-b{position:relative;display:inline-flex;} .count-b .n{position:absolute;top:-6px;right:-6px;background:var(--alert);color:#fff;font-size:.62rem;font-weight:700;min-width:18px;height:18px;border-radius:100px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+  .pill{font-size:.7rem;font-weight:700;border-radius:100px;padding:4px 10px;}
+  .pill.ok{background:var(--vital-soft);color:var(--vital);} .pill.wa{background:var(--watch-soft);color:var(--watch);} .pill.al{background:var(--alert-soft);color:var(--alert);}
+  .alert{border-radius:calc(var(--r) - 3px);padding:12px 14px;font-size:.85rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;border:1px solid;}
+  .alert svg{width:17px;height:17px;flex:none;margin-top:1px;}
+  .alert.info{background:var(--brand-soft);border-color:color-mix(in srgb,var(--brand) 30%,transparent);color:var(--text);}
+  .alert.ok{background:var(--vital-soft);border-color:color-mix(in srgb,var(--vital) 30%,transparent);}
+  .alert.wa{background:var(--watch-soft);border-color:color-mix(in srgb,var(--watch) 30%,transparent);}
+  .alert.al{background:var(--alert-soft);border-color:color-mix(in srgb,var(--alert) 30%,transparent);}
+  .prog{height:9px;border-radius:100px;background:var(--line);overflow:hidden;} .prog i{display:block;height:100%;background:var(--brand);border-radius:100px;}
+  .ring-s{transform:rotate(-90deg);} .ring-s .t{fill:none;stroke:var(--line);stroke-width:9;} .ring-s .v{fill:none;stroke:var(--brand);stroke-width:9;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:55;}
+  .spin{width:26px;height:26px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--brand);animation:spin 1s linear infinite;} @keyframes spin{to{transform:rotate(360deg);}}
+  .skel{background:linear-gradient(90deg,var(--surface-2),var(--line-2),var(--surface-2));background-size:200% 100%;animation:sk 1.4s infinite;border-radius:8px;} @keyframes sk{to{background-position:-200% 0;}}
+  .tip{position:relative;display:inline-block;} .tip .tipc{position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:.72rem;font-weight:600;padding:6px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;} .tip:hover .tipc{opacity:1;}
+  .divider{height:1px;background:var(--line);margin:6px 0;}
+
+  .tabs .th{display:flex;gap:2px;border-bottom:1px solid var(--line);} .tabs .th button{border:none;background:none;font:inherit;font-size:.85rem;font-weight:600;color:var(--text-2);padding:9px 13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;} .tabs .th button.on{color:var(--brand);border-color:var(--brand);} .tabs .tp{padding:14px 2px 0;font-size:.88rem;color:var(--text-2);}
+  .crumb{display:flex;gap:8px;align-items:center;font-size:.84rem;color:var(--text-3);} .crumb b{color:var(--text);font-weight:600;} .crumb .s{opacity:.5;}
+  .page{display:flex;gap:6px;} .page button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;cursor:pointer;} .page button.on{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .steps{display:flex;align-items:center;} .steps .st{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-3);} .steps .st .c{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;} .steps .st.done .c{background:var(--brand);border-color:var(--brand);color:#fff;} .steps .st.now .c{border-color:var(--brand);color:var(--brand);} .steps .ln{width:34px;height:2px;background:var(--line);margin:0 4px;} .steps .st.done+.ln{background:var(--brand);}
+  .menu{border:1px solid var(--line);border-radius:calc(var(--r) - 3px);overflow:hidden;} .menu a{display:flex;align-items:center;gap:10px;padding:10px 13px;font-size:.86rem;border-bottom:1px solid var(--line);} .menu a:last-child{border-bottom:none;} .menu a:hover{background:var(--surface-2);} .menu a svg{width:16px;height:16px;color:var(--text-3);}
+
+  .stat .v{font-family:var(--disp);font-size:2.1rem;line-height:1;} .stat .l{color:var(--text-3);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-top:6px;} .stat .d{font-size:.78rem;font-weight:600;color:var(--vital);margin-top:8px;}
+  table.tbl{width:100%;border-collapse:collapse;font-size:.85rem;} table.tbl th{text-align:left;color:var(--text-3);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line);} table.tbl td{padding:10px;border-bottom:1px solid var(--line-2);} table.tbl tr:last-child td{border-bottom:none;}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,var(--brand-2),var(--brand));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:600;font-size:.9rem;}
+  .agroup{display:flex;} .agroup .avatar{margin-left:-10px;border:2px solid var(--surface);} .agroup .avatar:first-child{margin-left:0;}
+  .tl{position:relative;padding-left:22px;} .tl::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line);} .tl .ev{position:relative;padding-bottom:14px;} .tl .ev::before{content:"";position:absolute;left:-22px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--brand);border:2px solid var(--surface);} .tl .ev b{font-weight:600;font-size:.88rem;} .tl .ev span{display:block;color:var(--text-3);font-size:.78rem;}
+  .acc .ai{border-bottom:1px solid var(--line);} .acc .ah{width:100%;text-align:left;background:none;border:none;font:inherit;font-weight:600;font-size:.9rem;color:var(--text);padding:12px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;} .acc .ah .pl{color:var(--text-3);transition:transform .2s;} .acc .ai.open .ah .pl{transform:rotate(45deg);} .acc .ab{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s;} .acc .ai.open .ab{grid-template-rows:1fr;} .acc .ab>div{overflow:hidden;} .acc .ab p{margin:0 0 12px;color:var(--text-2);font-size:.86rem;}
+
+  .chart{width:100%;height:auto;overflow:visible;} .chart .lp{fill:none;stroke:var(--brand);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;} .chart .ar{fill:var(--brand-soft);} .chart .bar{fill:var(--brand);} .chart .gl{stroke:var(--line-2);}
+  .donut{transform:rotate(-90deg);} .donut .t{fill:none;stroke:var(--line);stroke-width:14;} .donut .v{fill:none;stroke:var(--brand);stroke-width:14;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:99;}
+
+  /* health/domain */
+  .score{display:flex;align-items:center;gap:16px;} .score .num{font-family:var(--disp);font-size:2.4rem;} 
+  .bm .nm{font-weight:600;display:flex;justify-content:space-between;align-items:center;} .bm .val{font-family:var(--disp);font-size:1.7rem;margin:6px 0;} .bm .val small{font-family:var(--sans);font-size:.72rem;color:var(--text-3);} .bm .rb{height:6px;border-radius:100px;background:var(--line);position:relative;} .bm .rz{position:absolute;top:0;bottom:0;background:var(--vital-soft);border-radius:100px;} .bm .rm{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;background:var(--text);transform:translate(-50%,-50%);}
+  .rxc{display:flex;gap:12px;align-items:center;} .rxc .ic{width:42px;height:42px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none;} .rxc b{font-weight:600;} .rxc span{display:block;color:var(--text-3);font-size:.8rem;}
+  .rowi{display:flex;justify-content:space-between;align-items:center;} .rowi b{font-weight:600;} .rowi span{display:block;color:var(--text-3);font-size:.8rem;} .rowi .amt{font-family:var(--disp);font-size:1.15rem;}
+  .cost .r{display:flex;justify-content:space-between;padding:7px 0;font-size:.86rem;border-top:1px solid var(--line-2);} .cost .r:first-child{border-top:none;} .cost .r.tot{border-top:1.5px solid var(--line);font-weight:700;margin-top:4px;padding-top:10px;} .cost .r .g{color:var(--vital);}
+
+  /* AI */
+  .ai-ans{background:var(--surface-2);border:1px solid var(--line);border-radius:calc(var(--r) - 2px);padding:14px;font-size:.88rem;line-height:1.55;} .ai-ans .cite{background:var(--brand-soft);color:var(--brand);font-weight:600;border-radius:5px;padding:0 5px;} .ai-ans .src{margin-top:10px;font-size:.72rem;font-weight:600;color:var(--brand);background:var(--brand-soft);display:inline-block;padding:3px 9px;border-radius:100px;}
+  .conf{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;border-radius:100px;padding:4px 10px;} .conf .d{width:7px;height:7px;border-radius:50%;background:currentColor;} .conf.hi{background:var(--vital-soft);color:var(--vital);} .conf.lo{background:var(--watch-soft);color:var(--watch);}
+  .bub{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.86rem;line-height:1.45;margin-bottom:8px;} .bub.u{margin-left:auto;background:var(--brand);color:#fff;border-bottom-right-radius:4px;} .bub.a{background:var(--surface-2);border:1px solid var(--line-2);border-bottom-left-radius:4px;}
+  .consent .h{display:flex;gap:10px;align-items:center;margin-bottom:10px;} .consent .h .ic{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;} .consent .h b{font-weight:600;} .consent p{font-size:.84rem;color:var(--text-2);margin:0 0 12px;}
+
+  /* empty / rating / dropzone / calendar / toast / modal / cmd */
+  .empty{text-align:center;padding:8px;} .empty .ic{width:48px;height:48px;border-radius:14px;background:var(--surface-2);color:var(--text-3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;} .empty b{display:block;font-weight:600;margin-bottom:4px;} .empty span{color:var(--text-3);font-size:.84rem;}
+  .stars{display:flex;gap:4px;} .stars button{background:none;border:none;cursor:pointer;color:var(--line);padding:0;} .stars button.on{color:var(--watch);} .stars svg{width:24px;height:24px;}
+  .drop{border:2px dashed var(--line);border-radius:calc(var(--r) - 2px);padding:24px;text-align:center;color:var(--text-3);cursor:pointer;} .drop:hover{border-color:var(--brand);color:var(--brand);} .drop svg{width:24px;height:24px;margin-bottom:6px;}
+  .calm{max-width:260px;} .cal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:600;font-size:.85rem;} .cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;} .cal-g .d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:.78rem;border-radius:8px;cursor:pointer;} .cal-g .d:hover{background:var(--brand-soft);color:var(--brand);} .cal-g .d.on{background:var(--brand);color:#fff;} .cal-g .dw{font-size:.62rem;color:var(--text-3);text-align:center;font-weight:700;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:12px 18px;border-radius:100px;font-size:.86rem;font-weight:600;box-shadow:var(--sh3);opacity:0;pointer-events:none;transition:.3s;z-index:300;display:flex;gap:10px;align-items:center;} .toast.show{opacity:1;transform:translateX(-50%);} .toast .tk{color:#3dd99b;}
+  .ov{position:fixed;inset:0;background:rgba(10,11,18,.6);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:250;opacity:0;pointer-events:none;transition:opacity .25s;} .ov.open{opacity:1;pointer-events:auto;}
+  .ov .m{background:var(--surface);border-radius:18px;padding:26px;max-width:400px;width:100%;transform:scale(.97);transition:transform .25s;} .ov.open .m{transform:none;} .ov .m h3{font-family:var(--disp);font-weight:400;font-size:1.5rem;margin:0 0 8px;} .ov .m p{color:var(--text-2);font-size:.9rem;margin:0 0 18px;}
+  .cmd{align-items:flex-start;padding-top:12vh;} .cmdbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;width:min(520px,100%);overflow:hidden;box-shadow:var(--sh3);transform:translateY(-10px);transition:transform .25s;} .ov.open .cmdbox{transform:none;} .cmdbox input{width:100%;border:none;border-bottom:1px solid var(--line);background:none;color:var(--text);font:inherit;font-size:1rem;padding:16px 18px;} .cmdbox input:focus{outline:none;} .cmdlist{max-height:280px;overflow:auto;padding:6px;} .cmdlist button{width:100%;text-align:left;background:none;border:none;color:var(--text);font:inherit;font-size:.9rem;padding:10px 12px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;} .cmdlist button:hover,.cmdlist button.on{background:var(--brand-soft);color:var(--brand);}
+
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 60px;color:var(--text-3);font-size:.84rem;}
+  .fnote{font-size:.74rem;margin-top:12px;max-width:64ch;}
+
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand-2)"/><stop offset="1" stop-color="var(--brand)"/></linearGradient>
+  <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand-2)"/><stop offset="1" stop-color="var(--brand)"/></linearGradient>
+  <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity="0.28"/><stop offset="1" stop-color="var(--brand)" stop-opacity="0"/></linearGradient>
+</defs></svg>
+
+<nav class="nav">
+  <div class="nav-in">
+    <button class="brand" data-route="v-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.3"/><circle cx="18" cy="7" r="2.3"/><circle cx="12" cy="18" r="2.3"/><path d="M8 7h8M7.6 8.6 10.6 16M16.4 8.6 13.4 16"/></svg> Aevia</button>
+    <div class="routes">
+      <button class="rbtn active" data-route="v-home">Home</button>
+      <button class="rbtn" data-route="v-dash">Dashboard</button>
+      <button class="rbtn" data-route="v-ds2">Design system</button>
+    </div>
+    <div class="nav-right">
+      <button class="tbtn" id="themeBtn" aria-label="Toggle dark or light mode"></button>
+      <button class="cta" id="ctaBtn">Join Aevia</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HOME ============ -->
+<section id="v-home" class="view active">
+
+  <header class="hero">
+    <div class="wrap hero-in">
+      <div>
+        <span class="kick"><span class="p"></span> One place for your whole health</span>
+        <h1>Your health, <em>finally in one place.</em></h1>
+        <p class="sub">Insurance, pharmacy, lab testing and care have always lived in separate apps that never talk to each other. Aevia stitches them into one, so the whole thing finally works like it should.</p>
+        <div class="hcta"><button class="bp" data-open="join">Join Aevia</button><button class="bg2" data-route="v-dash">See the dashboard</button></div>
+        <div class="hmeta"><span>Insurance</span><span>Pharmacy</span><span>Labs</span><span>Care</span></div>
+      </div>
+      <div class="ringwrap">
+        <svg class="ring" id="hring" viewBox="0 0 200 200"><circle class="t" cx="100" cy="100" r="86"/><circle class="v" cx="100" cy="100" r="86"/></svg>
+        <div class="rc"><div class="l">Your health score</div><div class="s" id="hscore">0</div><div class="u">Everything, in one number</div></div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Four worlds, one app</p>
+      <h2>Everything your health touches, <em>together.</em></h2>
+      <p class="lead">Each of these is usually its own company and its own login. Aevia brings them under one roof, so they can finally share what they know about you.</p>
+      <div class="pillars">
+        <div class="pill-card" data-route="v-dash">
+          <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Insurance</h3><p>See what is covered, what you owe, and where your claims are, in plain numbers.</p><div class="go">Open &rarr;</div>
+        </div>
+        <div class="pill-card" data-route="v-dash">
+          <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5a3 3 0 0 1 6 0v3M12 12v4M10 14h4"/></svg></div>
+          <h3>Pharmacy</h3><p>Order and refill medicine in a tap, delivered to your door, priced before you buy.</p><div class="go">Open &rarr;</div>
+        </div>
+        <div class="pill-card" data-route="v-dash">
+          <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6l-5 8a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-8V3"/><path d="M8 3h8M8 14h8"/></svg></div>
+          <h3>Labs</h3><p>At-home blood testing that turns a wall of numbers into one clear picture and a plan.</p><div class="go">Open &rarr;</div>
+        </div>
+        <div class="pill-card" data-route="v-dash">
+          <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6a5 5 0 0 0-8.8-3.2A5 5 0 0 0 3.2 8.6c0 5 8.8 10.4 8.8 10.4s8.8-5.4 8.8-10.4z"/></svg></div>
+          <h3>Care</h3><p>See a clinician by video, message your care team, and get prescriptions sent onward.</p><div class="go">Open &rarr;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stitch">
+    <div class="wrap">
+      <p class="eyebrow">Why one app changes everything</p>
+      <h2>The magic is in the <em>seams.</em></h2>
+      <p class="lead">When these four talk to each other, a whole class of friction just disappears. Here is one real thread, start to finish, without you re-explaining anything.</p>
+      <div class="flow">
+        <div class="fstep"><div class="n">Labs</div><b>A flag appears</b><p>Your at-home test shows your omega-3 is low.</p><div class="arrow">&rarr;</div></div>
+        <div class="fstep"><div class="n">Care</div><b>A clinician reviews</b><p>Your care team sees the result and suggests a fix, no repeat visit.</p><div class="arrow">&rarr;</div></div>
+        <div class="fstep"><div class="n">Pharmacy</div><b>It ships</b><p>The recommendation goes straight to pharmacy and heads to your door.</p><div class="arrow">&rarr;</div></div>
+        <div class="fstep"><div class="n">Insurance</div><b>It is covered</b><p>Your plan applies automatically, and you see the real price up front.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Labs, made legible</p>
+      <h2>The wall of numbers, <em>translated.</em></h2>
+      <p class="lead">A live sample of the labs view. Filter by system, tap any marker to see what it means and what to do.</p>
+      <div class="panelbox">
+        <div class="pb-top"><b>Sample member</b>
+          <div class="filters" id="hfilters">
+            <button class="filter active" data-f="all">All</button><button class="filter" data-f="Heart">Heart</button><button class="filter" data-f="Metabolic">Metabolic</button><button class="filter" data-f="Nutrients">Nutrients</button><button class="filter" data-f="Hormones">Hormones</button>
+          </div>
+        </div>
+        <div class="bm-grid" id="hbm"></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="wrap">
+      <p class="eyebrow">Membership</p>
+      <h2>One membership. <em>All of it.</em></h2>
+      <p class="lead">No separate bills for labs, pharmacy and care. One plan, everything included, insurance connected.</p>
+      <div class="plans">
+        <div class="plan"><h3>Essential</h3><div class="pr">$29<small>/mo</small></div><div class="per">The connected basics</div><ul><li><span class="ck">&#10003;</span> Insurance + pharmacy in one place</li><li><span class="ck">&#10003;</span> Medicine delivery</li><li><span class="ck">&#10003;</span> One lab panel a year</li></ul><button class="pbtn" data-open="Essential">Choose Essential</button></div>
+        <div class="plan feat"><span class="tg">Most popular</span><h3>Aevia</h3><div class="pr">$59<small>/mo</small></div><div class="per">The whole platform</div><ul><li><span class="ck">&#10003;</span> Everything in Essential</li><li><span class="ck">&#10003;</span> Quarterly lab testing</li><li><span class="ck">&#10003;</span> Unlimited video care</li><li><span class="ck">&#10003;</span> Priority pharmacy</li></ul><button class="pbtn" data-open="Aevia">Choose Aevia</button></div>
+        <div class="plan"><h3>Family</h3><div class="pr">$99<small>/mo</small></div><div class="per">Up to five members</div><ul><li><span class="ck">&#10003;</span> Everything in Aevia</li><li><span class="ck">&#10003;</span> Five member profiles</li><li><span class="ck">&#10003;</span> Shared care team</li></ul><button class="pbtn" data-open="Family">Choose Family</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ctab">
+    <div class="wrap"><h2>Stop juggling five apps for <em>one body.</em></h2><p class="lead">Bring your insurance, pharmacy, labs and care together this week.</p><button class="bp" data-open="join">Join Aevia</button></div>
+  </section>
+
+  <footer><div class="wrap">
+    <div class="foot"><div class="brand">Aevia</div><span>Insurance &middot; Pharmacy &middot; Labs &middot; Care</span></div>
+    <p class="fnote">Aevia is a fictional brand and product concept created by Sai Keerthi Koppolu to demonstrate premium product and experience design. It is not a real medical, pharmacy or insurance service, and all data shown is illustrative.</p>
+  </div></footer>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="v-dash" class="view">
+  <div class="dash"><div class="wrap">
+    <h1 class="greet">Good morning, <em>Maya.</em></h1>
+    <p class="dsub">Everything in one place. Two things need you today.</p>
+    <div class="dtabs" id="dtabs">
+      <button class="dtab active" data-tab="d-overview">Overview</button>
+      <button class="dtab" data-tab="d-labs">Labs</button>
+      <button class="dtab" data-tab="d-pharmacy">Pharmacy</button>
+      <button class="dtab" data-tab="d-insurance">Insurance</button>
+      <button class="dtab" data-tab="d-care">Care</button>
+    </div>
+
+    <!-- overview -->
+    <div class="dash-panel active" id="d-overview">
+      <div class="grid2">
+        <div class="card"><div class="ch"><h3>Your health score</h3><span class="m">Updated today</span></div>
+          <div class="scorecard">
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;"><svg class="dring" id="dring" viewBox="0 0 150 150"><circle class="t" cx="75" cy="75" r="68"/><circle class="v" cx="75" cy="75" r="68"/></svg><div style="position:absolute;text-align:center;"><div class="snum" id="dsnum">0</div></div></div>
+            <div><div style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);">Biological age</div><div style="font-family:var(--disp);font-size:1.5rem;">41 <span style="font-size:.9rem;color:var(--text-2);">&middot; 6 yrs younger</span></div><div class="delta">&uarr; 4 points this quarter</div></div>
+          </div>
+        </div>
+        <div class="card"><div class="ch"><h3>Needs you today</h3></div>
+          <div class="quick">
+            <div class="qc" data-tab="d-pharmacy"><div class="ql">Pharmacy</div><div class="qv">Refill due</div><div class="qm">Atorvastatin, in 5 days</div></div>
+            <div class="qc" data-tab="d-labs"><div class="ql">Labs</div><div class="qv">New result</div><div class="qm">Omega-3 needs attention</div></div>
+            <div class="qc" data-tab="d-insurance"><div class="ql">Insurance</div><div class="qv">Claim update</div><div class="qm">$35 visit, processing</div></div>
+            <div class="qc" data-tab="d-care"><div class="ql">Care</div><div class="qv">Upcoming visit</div><div class="qm">Dr. Rivera, Jun 12</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px;"><div class="ch"><h3>Priority plan</h3><span class="m" id="pcount">3 actions &middot; 0 done</span></div><div id="planMini"></div></div>
+    </div>
+
+    <!-- labs -->
+    <div class="dash-panel" id="d-labs">
+      <div class="grid2" style="margin-bottom:16px;">
+        <div class="card"><div class="ch"><h3>Score over time</h3><span class="m">5 tests</span></div>
+          <div class="cw" id="cw"><svg class="chart" id="chart" viewBox="0 0 600 240" preserveAspectRatio="none"><g class="g"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="160" x2="600" y2="160"/><line x1="0" y1="220" x2="600" y2="220"/></g><path class="area" id="area-p"/><path class="lp" id="line-p"/><g id="dots"></g><g id="xl"></g></svg><div class="tt" id="tt"></div></div>
+        </div>
+        <div class="card"><div class="ch"><h3>Filter by system</h3></div>
+          <div class="filters" id="dfilters" style="gap:8px;"><button class="filter active" data-f="all" style="background:var(--brand-soft);color:var(--brand);border:1px solid var(--brand);">All</button><button class="filter" data-f="Heart" style="border:1px solid var(--line);color:var(--text-2);">Heart</button><button class="filter" data-f="Metabolic" style="border:1px solid var(--line);color:var(--text-2);">Metabolic</button><button class="filter" data-f="Inflammation" style="border:1px solid var(--line);color:var(--text-2);">Inflammation</button><button class="filter" data-f="Nutrients" style="border:1px solid var(--line);color:var(--text-2);">Nutrients</button><button class="filter" data-f="Hormones" style="border:1px solid var(--line);color:var(--text-2);">Hormones</button></div>
+          <p style="color:var(--text-2);font-size:.9rem;margin-top:14px;">Nine markers across five systems. Tap any card below to see what it means and what to do.</p>
+        </div>
+      </div>
+      <div class="card dash-panel-inner" style="background:transparent;border:none;padding:0;"><div class="bm-grid dash-panel" id="dbm" style="display:grid;"></div></div>
+    </div>
+
+    <!-- pharmacy -->
+    <div class="dash-panel" id="d-pharmacy">
+      <div class="grid2">
+        <div class="card"><div class="ch"><h3>Your prescriptions</h3><span class="m">3 active</span></div><div id="rxList"></div></div>
+        <div class="stack">
+          <div class="card"><div class="ch"><h3>Next delivery</h3></div><div class="row-item" style="border:none;padding-top:0;"><div class="ri-main"><b>Tuesday, Jun 10</b><span>Atorvastatin and Vitamin D, left at your door</span></div><span class="tag ok">On the way</span></div></div>
+          <div class="card"><div class="ch"><h3>Suggested for you</h3><span class="m">From your labs</span></div><div id="otcList"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- insurance -->
+    <div class="dash-panel" id="d-insurance">
+      <div class="grid2">
+        <div class="stack">
+          <div class="card"><div class="ch"><h3>Your plan</h3></div><div style="font-family:var(--disp);font-size:1.4rem;">Aevia Complete</div><div style="color:var(--text-2);font-size:.9rem;">Member ID ending 4417 &middot; In network</div></div>
+          <div class="card"><div class="ch"><h3>Deductible</h3><span class="m">Resets January</span></div><div class="prog"><div class="f" style="width:80%;"></div></div><div style="display:flex;justify-content:space-between;font-size:.85rem;color:var(--text-2);"><span>$1,200 met</span><span>$1,500 total</span></div><p style="color:var(--text-2);font-size:.86rem;margin:10px 0 0;">You are close. Most visits are low cost from here.</p></div>
+        </div>
+        <div class="card"><div class="ch"><h3>Recent claims</h3><span class="m">Last 60 days</span></div>
+          <div class="row-item"><div class="ri-main"><b>Specialist visit</b><span>Dr. Rivera &middot; May 28</span></div><div class="ri-right"><div class="amt">$35</div><span class="tag proc">Processing</span></div></div>
+          <div class="row-item"><div class="ri-main"><b>Lab panel</b><span>Aevia Labs &middot; May 12</span></div><div class="ri-right"><div class="amt">$0</div><span class="tag ok">Covered</span></div></div>
+          <div class="row-item"><div class="ri-main"><b>Pharmacy</b><span>Atorvastatin &middot; May 2</span></div><div class="ri-right"><div class="amt">$8</div><span class="tag ok">Covered</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- care -->
+    <div class="dash-panel" id="d-care">
+      <div class="grid2">
+        <div class="stack">
+          <div class="card"><div class="ch"><h3>Upcoming visit</h3></div>
+            <div style="font-family:var(--disp);font-size:1.5rem;">Dr. Rivera</div><div id="visitWhen" style="color:var(--text-2);font-size:.9rem;margin-bottom:14px;">Video visit &middot; Thursday, Jun 12, 10:00am</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="mini-btn" id="joinCall">Join call</button><button class="mini-btn ghost" data-sched="reschedule">Reschedule</button></div>
+          </div>
+          <div class="card"><div class="ch"><h3>Book a visit</h3></div><p style="color:var(--text-2);font-size:.9rem;margin:0 0 12px;">Same-day video appointments, usually within the hour.</p><button class="mini-btn" data-sched="book">Book now</button></div>
+        </div>
+        <div class="card"><div class="ch"><h3>Message your care team</h3><span class="m">Replies within a day</span></div>
+          <div id="thread" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="align-self:flex-start;background:var(--surface-2);border-radius:13px;border-bottom-left-radius:4px;padding:11px 13px;font-size:.9rem;max-width:85%;">Hi Maya, your omega-3 came back low. Adding fish or a supplement will help. Any questions?</div>
+          </div>
+          <div class="msg-input"><input id="msgIn" placeholder="Write a message"><button class="mini-btn" id="msgSend">Send</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div></div>
+</section>
+
+<!-- ============ DESIGN SYSTEM ============ -->
+<section id="v-ds2" class="view">
+<div class="wl"><div class="wl-in">
+  <div class="grp"><span class="lbl">Brand</span>
+    <button class="sw on" data-brand="#3D38EA|#635DFF" style="background:#3D38EA"></button>
+    <button class="sw" data-brand="#0E9F6E|#34D399" style="background:#0E9F6E"></button>
+    <button class="sw" data-brand="#0D9488|#2DD4BF" style="background:#0D9488"></button>
+    <button class="sw" data-brand="#7C3AED|#A78BFA" style="background:#7C3AED"></button>
+    <button class="sw" data-brand="#E5654B|#FB7C5C" style="background:#E5654B"></button>
+    <button class="sw" data-brand="#334155|#64748B" style="background:#334155"></button>
+    <input type="color" id="custom" value="#3D38EA" aria-label="Custom brand colour">
+  </div>
+  <div class="grp"><span class="lbl">Type</span>
+    <button class="opt on" data-font="ed">Editorial</button>
+    <button class="opt" data-font="modern">Modern</button>
+    <button class="opt" data-font="warm">Warm</button>
+  </div>
+  <div class="grp"><span class="lbl">Radius</span>
+    <button class="opt" data-r="4">Sharp</button>
+    <button class="opt on" data-r="14">Soft</button>
+    <button class="opt" data-r="22">Round</button>
+  </div>
+  <div class="grp"><span class="lbl">Density</span>
+    <button class="opt on" data-pad="22">Comfy</button>
+    <button class="opt" data-pad="15">Compact</button>
+  </div>
+</div></div>
+
+<header class="head"><div class="wrap">
+  <h1>One system. Any brand.</h1>
+  <p>Aevia's design system is built entirely on tokens, so it is white-label by default. Change the brand colour, typeface, corner radius or density in the bar above, and all sixty-plus components below re-skin instantly. This is what lets one team ship many products that still feel like one.</p>
+  <div class="count"><span id="cnum">60+</span> components, live and theme-driven</div>
+</div></header>
+
+<div class="wrap" id="gallery">
+
+  <div class="sec"><h2 class="sec-h">Foundations</h2><p class="sec-sub">The atoms every component is built from.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">01</span> Colour tokens</div><div style="display:flex;gap:12px;flex-wrap:wrap;"><div style="text-align:center;font-size:.62rem;color:var(--text-3)"><div style="width:40px;height:40px;border-radius:10px;background:var(--brand)"></div>Brand</div><div style="text-align:center;font-size:.62rem;color:var(--text-3)"><div style="width:40px;height:40px;border-radius:10px;background:var(--vital)"></div>Vital</div><div style="text-align:center;font-size:.62rem;color:var(--text-3)"><div style="width:40px;height:40px;border-radius:10px;background:var(--watch)"></div>Watch</div><div style="text-align:center;font-size:.62rem;color:var(--text-3)"><div style="width:40px;height:40px;border-radius:10px;background:var(--alert)"></div>Alert</div><div style="text-align:center;font-size:.62rem;color:var(--text-3)"><div style="width:40px;height:40px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)"></div>Surface</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">02</span> Typography</div><div style="font-family:var(--disp);font-size:1.8rem;line-height:1.1;">Display</div><div style="font-weight:600;font-size:1.1rem;margin-top:4px;">Interface medium</div><div style="font-size:.85rem;color:var(--text-2);margin-top:4px;">Body copy at a comfortable reading size.</div><div style="font-variant-numeric:tabular-nums;margin-top:4px;">0123456789</div></div>
+    <div class="comp"><div class="cl"><span class="n">03</span> Spacing</div><div style="display:flex;align-items:flex-end;gap:8px;"><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:4px;height:4px;background:var(--brand);border-radius:1px;margin:0 auto 5px"></div>4</div><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:8px;height:8px;background:var(--brand);border-radius:1px;margin:0 auto 5px"></div>8</div><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:12px;height:12px;background:var(--brand);border-radius:2px;margin:0 auto 5px"></div>12</div><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:16px;height:16px;background:var(--brand);border-radius:2px;margin:0 auto 5px"></div>16</div><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:24px;height:24px;background:var(--brand);border-radius:4px;margin:0 auto 5px"></div>24</div><div style="text-align:center;font-size:.58rem;color:var(--text-3)"><div style="width:32px;height:32px;background:var(--brand);border-radius:5px;margin:0 auto 5px"></div>32</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">04</span> Radius</div><div style="display:flex;gap:10px;align-items:center;"><div style="width:44px;height:44px;background:var(--brand-soft);border:1px solid var(--brand);border-radius:var(--r)"></div><span style="font-size:.8rem;color:var(--text-3)">Follows the token, live</span></div></div>
+    <div class="comp"><div class="cl"><span class="n">05</span> Elevation</div><div style="display:flex;gap:14px;"><div style="width:48px;height:48px;border-radius:12px;background:var(--surface-2);box-shadow:var(--sh1)"></div><div style="width:48px;height:48px;border-radius:12px;background:var(--surface-2);box-shadow:var(--sh2)"></div><div style="width:48px;height:48px;border-radius:12px;background:var(--surface-2);box-shadow:var(--sh3)"></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">06</span> Iconography</div><div style="display:flex;gap:14px;color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><path d="M20.8 8.6a5 5 0 0 0-8.8-3.2A5 5 0 0 0 3.2 8.6c0 5 8.8 10.4 8.8 10.4s8.8-5.4 8.8-10.4z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5a3 3 0 0 1 6 0v3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><path d="M9 3v6l-5 8a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-8V3"/><path d="M8 3h8"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="22" height="22"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Actions</h2><p class="sec-sub">Buttons and the ways people act.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">07</span> Button variants</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn pri">Primary</button><button class="btn sec">Secondary</button><button class="btn ghost">Ghost</button><button class="btn dang">Danger</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">08</span> Button sizes</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><button class="btn pri sm">Small</button><button class="btn pri">Medium</button><button class="btn pri lg">Large</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">09</span> Button states</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><button class="btn pri">Default</button><button class="btn pri dis">Disabled</button><button class="btn pri"><span class="spin" style="width:15px;height:15px;border-width:2px;"></span> Loading</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">10</span> Icon button</div><div style="display:flex;gap:8px;"><button class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button><button class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h16"/></svg></button><button class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div>
+    <div class="comp"><div class="cl"><span class="n">11</span> Button group</div><div class="grp-btn" id="bgrp"><button class="on">Day</button><button>Week</button><button>Month</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">12</span> Floating action</div><button class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Inputs &amp; controls</h2><p class="sec-sub">Everything a person fills in or flips.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">13</span> Text field</div><div class="field"><label>Email</label><input class="inp" placeholder="you@email.com"><div class="help">We never share this.</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">14</span> Field, error</div><div class="field"><label>Member ID</label><input class="inp bad" value="0000"><div class="err">That ID was not found.</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">15</span> Textarea</div><textarea class="inp" placeholder="Message your care team"></textarea></div>
+    <div class="comp"><div class="cl"><span class="n">16</span> Select</div><select class="inp"><option>Choose a plan</option><option>Essential</option><option>Aevia</option><option>Family</option></select></div>
+    <div class="comp"><div class="cl"><span class="n">17</span> Search</div><div class="inp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input class="inp" placeholder="Search"></div></div>
+    <div class="comp"><div class="cl"><span class="n">18</span> Checkbox</div><div class="check on" data-check><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span> Auto-refill</div><div class="check" data-check><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span> Paperless</div></div>
+    <div class="comp"><div class="cl"><span class="n">19</span> Radio</div><div data-radiogrp><div class="radio on"><span class="dot"><i></i></span> Video visit</div><div class="radio"><span class="dot"><i></i></span> In person</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">20</span> Toggle</div><div class="switchrow"><span style="font-size:.88rem;">Notifications</span><button class="switch on" data-switch></button></div></div>
+    <div class="comp"><div class="cl"><span class="n">21</span> Slider</div><input type="range" class="rng" min="0" max="100" value="62"></div>
+    <div class="comp"><div class="cl"><span class="n">22</span> Segmented</div><div class="seg" data-seg><button class="on">Metric</button><button>Imperial</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">23</span> Stepper</div><div class="stepper" data-stepper><button data-s="-1">&minus;</button><span class="val">2</span><button data-s="1">+</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">24</span> PIN input</div><div class="pin" data-pin><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"></div></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Feedback &amp; status</h2><p class="sec-sub">How the system talks back.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">25</span> Badges</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><span class="badge">New</span><span class="count-b"><span class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span class="n">3</span></span></div></div>
+    <div class="comp"><div class="cl"><span class="n">26</span> Status pills</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill ok">Optimal</span><span class="pill wa">Watch</span><span class="pill al">Attention</span></div></div>
+    <div class="comp wide"><div class="cl"><span class="n">27</span> Alerts</div><div class="alert info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg> Your results are ready to view.</div><div class="alert ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Refill confirmed, arriving Tuesday.</div><div class="alert wa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg> Your vitamin D is drifting low.</div><div class="alert al"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> A claim needs your attention.</div></div>
+    <div class="comp"><div class="cl"><span class="n">28</span> Toast</div><button class="btn sec" id="toastBtn">Trigger toast</button></div>
+    <div class="comp"><div class="cl"><span class="n">29</span> Progress bar</div><div class="prog"><i style="width:80%"></i></div><div style="font-size:.78rem;color:var(--text-3);margin-top:6px;">$1,200 of $1,500 deductible</div></div>
+    <div class="comp"><div class="cl"><span class="n">30</span> Progress ring</div><div style="display:flex;gap:12px;align-items:center;"><svg class="ring-s" width="60" height="60" viewBox="0 0 80 80"><circle class="t" cx="40" cy="40" r="35"/><circle class="v" cx="40" cy="40" r="35"/></svg><span style="font-size:.82rem;color:var(--text-2)">75% to goal</span></div></div>
+    <div class="comp"><div class="cl"><span class="n">31</span> Spinner &amp; skeleton</div><div style="display:flex;gap:16px;align-items:center;"><div class="spin"></div><div style="flex:1;"><div class="skel" style="height:10px;margin-bottom:8px;"></div><div class="skel" style="height:10px;width:70%;"></div></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">32</span> Tooltip</div><div class="tip"><button class="btn ghost">Hover me</button><span class="tipc">The best marker of heart risk</span></div></div>
+    <div class="comp"><div class="cl"><span class="n">33</span> Divider</div><div style="font-size:.84rem;color:var(--text-2)">Section one</div><div class="divider"></div><div style="font-size:.84rem;color:var(--text-2)">Section two</div></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Navigation</h2><p class="sec-sub">Moving through the product.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">34</span> Tabs</div><div class="tabs" data-tabs><div class="th"><button class="on" data-t="0">Labs</button><button data-t="1">Pharmacy</button><button data-t="2">Care</button></div><div class="tp" data-tp="0">Nine markers across five systems.</div><div class="tp" data-tp="1" hidden>Three active prescriptions.</div><div class="tp" data-tp="2" hidden>One visit on Thursday.</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">35</span> Breadcrumb</div><div class="crumb"><span>Home</span><span class="s">/</span><span>Labs</span><span class="s">/</span><b>Omega-3</b></div></div>
+    <div class="comp"><div class="cl"><span class="n">36</span> Pagination</div><div class="page" data-page><button>&lsaquo;</button><button class="on">1</button><button>2</button><button>3</button><button>&rsaquo;</button></div></div>
+    <div class="comp wide"><div class="cl"><span class="n">37</span> Steps</div><div class="steps"><div class="st done"><span class="c">&#10003;</span> Test</div><div class="ln"></div><div class="st done"><span class="c">&#10003;</span> Analyse</div><div class="ln"></div><div class="st now"><span class="c">3</span> Plan</div><div class="ln"></div><div class="st"><span class="c">4</span> Retest</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">38</span> Menu</div><div class="menu"><a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg> Overview</a><a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3v6l-5 8a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-8V3"/></svg> Labs</a><a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="8" width="16" height="12" rx="2"/></svg> Pharmacy</a></div></div>
+    <div class="comp"><div class="cl"><span class="n">39</span> Command palette</div><button class="btn sec" id="cmdBtn">Open (search anything)</button></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Data display</h2><p class="sec-sub">Showing information clearly.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">40</span> Stat card</div><div class="stat"><div class="v">82</div><div class="l">Health score</div><div class="d">&uarr; 4 this quarter</div></div></div>
+    <div class="comp wide"><div class="cl"><span class="n">41</span> Data table</div><table class="tbl"><thead><tr><th>Claim</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr><td>Specialist visit</td><td>May 28</td><td>$35</td><td><span class="pill wa">Processing</span></td></tr><tr><td>Lab panel</td><td>May 12</td><td>$0</td><td><span class="pill ok">Covered</span></td></tr><tr><td>Pharmacy</td><td>May 2</td><td>$8</td><td><span class="pill ok">Covered</span></td></tr></tbody></table></div>
+    <div class="comp"><div class="cl"><span class="n">42</span> Avatars</div><div style="display:flex;gap:16px;align-items:center;"><span class="avatar">M</span><div class="agroup"><span class="avatar">M</span><span class="avatar">R</span><span class="avatar">J</span><span class="avatar" style="background:var(--surface-2);color:var(--text-2)">+2</span></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">43</span> Timeline</div><div class="tl"><div class="ev"><b>Specialist visit</b><span>Today</span></div><div class="ev"><b>Lab results ready</b><span>In 3 days</span></div><div class="ev"><b>Follow-up call</b><span>Next week</span></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">44</span> Accordion</div><div class="acc" data-acc><div class="ai open"><button class="ah">What is ApoB? <span class="pl">+</span></button><div class="ab"><div><p>The best single marker of heart-disease risk.</p></div></div></div><div class="ai"><button class="ah">Why retest? <span class="pl">+</span></button><div class="ab"><div><p>To see whether your changes are working.</p></div></div></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">45</span> Line chart</div><div class="cw" style="position:relative;"><svg class="chart" id="lineC" viewBox="0 0 260 110" preserveAspectRatio="none"></svg></div></div>
+    <div class="comp"><div class="cl"><span class="n">46</span> Bar chart</div><svg class="chart" id="barC" viewBox="0 0 260 110"></svg></div>
+    <div class="comp"><div class="cl"><span class="n">47</span> Donut / gauge</div><div style="display:flex;gap:14px;align-items:center;"><svg class="donut" width="72" height="72" viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="45"/><circle class="v" cx="50" cy="50" r="45"/></svg><span style="font-size:.82rem;color:var(--text-2)">65% optimal</span></div></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">Health &amp; domain</h2><p class="sec-sub">The complex, unique components that make it a health product.</p></div>
+  <div class="gal">
+    <div class="comp"><div class="cl"><span class="n">48</span> Health score</div><div class="score"><svg class="ring-s" width="66" height="66" viewBox="0 0 80 80"><circle class="t" cx="40" cy="40" r="35"/><circle class="v" cx="40" cy="40" r="35" style="stroke-dashoffset:44"/></svg><div><div class="num">82</div><div style="font-size:.78rem;color:var(--text-3)">6 yrs younger</div></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">49</span> Biomarker card</div><div class="bm"><div class="nm">Omega-3 <span class="pill al">Attention</span></div><div class="val">4.8<small>%</small></div><div class="rb"><div class="rz" style="left:60%;right:0"></div><div class="rm" style="left:26%"></div></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">50</span> Prescription</div><div class="rxc"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5a3 3 0 0 1 6 0v3"/></svg></div><div style="flex:1"><b>Atorvastatin</b><span>10mg &middot; refill in 5 days</span></div><button class="btn pri sm">Refill</button></div></div>
+    <div class="comp"><div class="cl"><span class="n">51</span> Claim row</div><div class="rowi"><div><b>Specialist visit</b><span>Dr. Rivera &middot; May 28</span></div><div style="text-align:right"><div class="amt">$35</div><span class="pill wa">Processing</span></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">52</span> Cost breakdown</div><div class="cost"><div class="r"><span>Visit</span><span>$180</span></div><div class="r"><span>Plan covers</span><span class="g">&minus;$145</span></div><div class="r tot"><span>You pay</span><span>$35</span></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">53</span> Reference range</div><div class="bm"><div style="font-size:.8rem;color:var(--text-2);margin-bottom:8px;">Vitamin D &middot; optimal 40&ndash;60</div><div class="rb"><div class="rz" style="left:45%;right:10%"></div><div class="rm" style="left:32%"></div></div></div></div>
+  </div>
+
+  <div class="sec"><h2 class="sec-h">AI &amp; trust</h2><p class="sec-sub">The patterns that make AI believable, the signature of this system.</p></div>
+  <div class="gal">
+    <div class="comp wide"><div class="cl"><span class="n">54</span> AI answer with sources</div><div class="ai-ans">Your specialist visit is covered. Your share is <span class="cite">$35 [1]</span>, because you have met most of your <span class="cite">deductible [2]</span>.<div class="src">Sources: your plan &middot; your claims</div></div></div>
+    <div class="comp"><div class="cl"><span class="n">55</span> Confidence</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="conf hi"><span class="d"></span> High confidence</span><span class="conf lo"><span class="d"></span> Not sure</span></div></div>
+    <div class="comp"><div class="cl"><span class="n">56</span> Chat</div><div class="bub u">Is my visit covered?</div><div class="bub a">Yes, your share is $35.</div></div>
+    <div class="comp"><div class="cl"><span class="n">57</span> Consent card</div><div class="consent"><div class="h"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></svg></span><b>Share with your care team?</b></div><p>Aevia will let Dr. Rivera see your latest labs. You can turn this off anytime.</p><div style="display:flex;gap:8px;"><button class="btn pri sm">Allow</button><button class="btn ghost sm">Not now</button></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">58</span> Empty state</div><div class="empty"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 3v6l-5 8a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-8V3"/></svg></div><b>No results yet</b><span>Your first test is on its way.</span></div></div>
+    <div class="comp"><div class="cl"><span class="n">59</span> Rating</div><div class="stars" data-stars><button data-i="1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 17l-5.5 2.5 1-6.3L3 8.9 9 8z"/></svg></button><button data-i="2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 17l-5.5 2.5 1-6.3L3 8.9 9 8z"/></svg></button><button data-i="3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 17l-5.5 2.5 1-6.3L3 8.9 9 8z"/></svg></button><button data-i="4"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 17l-5.5 2.5 1-6.3L3 8.9 9 8z"/></svg></button><button data-i="5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 17l-5.5 2.5 1-6.3L3 8.9 9 8z"/></svg></button></div></div>
+    <div class="comp"><div class="cl"><span class="n">60</span> File upload</div><div class="drop" id="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="display:block;margin:0 auto"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Drop a file, or click to upload</div></div>
+    <div class="comp"><div class="cl"><span class="n">61</span> Mini calendar</div><div class="calm"><div class="cal-h"><span>June 2026</span></div><div class="cal-g" id="miniCal"></div></div></div>
+    <div class="comp"><div class="cl"><span class="n">62</span> Modal</div><button class="btn sec" id="modalBtn">Open dialog</button></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><span class="tk">&#10003;</span> Refill requested</div>
+<div class="ov" id="modalOv"><div class="m"><h3>Confirm refill</h3><p>Send your Atorvastatin refill to the pharmacy for Tuesday delivery?</p><div style="display:flex;gap:8px;"><button class="btn pri" id="modalOk">Confirm</button><button class="btn ghost" id="modalNo">Cancel</button></div></div></div>
+<div class="ov cmd" id="cmdOv"><div class="cmdbox"><input id="cmdIn" placeholder="Search labs, meds, claims, care..."><div class="cmdlist" id="cmdList"></div></div></div>
+
+<footer><div class="wrap">Aevia Design System &middot; 50+ components, white-label ready
+  <p class="fnote">Aevia is a fictional brand and design system created by Sai Keerthi Koppolu to demonstrate premium product and experience design. Not a real service.</p>
+</div></footer>
+
+
+</section>
+
+<!-- video call -->
+<div class="callov" id="callov" role="dialog" aria-label="Video visit">
+  <div class="callwin">
+    <div class="ctop"><span class="cbrand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Aevia Care</span><span class="ctimer" id="ctimer">Connecting</span></div>
+    <div class="cstage">
+      <div class="docvid"><div class="davatar">DR</div><div class="dname">Dr. Rivera</div><div class="dstat" id="cstatus">Connecting you now</div></div>
+      <div class="selfvid">You</div>
+    </div>
+    <div class="cctrl">
+      <button class="cctl" id="cmic" aria-label="Mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10a7 7 0 0 1-14 0M12 19v3"/></svg></button>
+      <button class="cctl" id="ccam" aria-label="Camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></button>
+      <button class="cctl" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 16V3M8 7l4-4 4 4"/></svg></button>
+      <button class="cctl end" id="cend" aria-label="End call"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08A.99.99 0 0 1 0 12.38c0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-1.81 1.85c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28a11.27 11.27 0 0 0-2.66-1.85.998.998 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- scheduler -->
+<div class="schov" id="schov" role="dialog" aria-label="Schedule a visit"><div class="schm" id="schm"></div></div>
+
+<!-- chatbot -->
+<button class="fab" id="fab" aria-label="Open Aevia assistant">
+  <span class="fdot"></span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20l1.1-4.1A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></svg>
+</button>
+<div class="chatw" id="chatw" role="dialog" aria-label="Aevia assistant">
+  <div class="chead">
+    <div class="cav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.3"/><circle cx="18" cy="7" r="2.3"/><circle cx="12" cy="18" r="2.3"/><path d="M8 7h8M7.6 8.6 10.6 16M16.4 8.6 13.4 16"/></svg></div>
+    <div><b>Ask Aevia</b><span><span class="d"></span> Your health assistant</span></div>
+    <button class="cx" id="cx" aria-label="Close">&times;</button>
+  </div>
+  <div class="cbody" id="cbody">
+    <div class="cmsg bot">Hi Maya. I can see across your insurance, pharmacy, labs and care, so ask me anything. What can I help with?</div>
+  </div>
+  <div class="cchips" id="cchips">
+    <button class="cchip">Is my visit covered?</button>
+    <button class="cchip">Refill my statin</button>
+    <button class="cchip">What does my omega-3 mean?</button>
+    <button class="cchip">Book a visit</button>
+  </div>
+  <div class="cfoot">
+    <input id="cin" placeholder="Ask about your health" aria-label="Message">
+    <button class="csend" id="csend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="mov" id="modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="mx" id="mx" aria-label="Close">&times;</button>
+    <div id="mform"><p class="mk" id="mk">Get started</p><h3 id="mtitle">Join Aevia</h3><p id="msubt">Enter your email and we will set up your account across insurance, pharmacy, labs and care.</p><input type="email" id="memail" placeholder="you@email.com" aria-label="Email"><button class="msub" id="msubmit">Continue</button><p class="mfine">A concept demo. No email is sent or stored.</p></div>
+    <div id="mdone" class="mdone hidden"><div class="tk">&#10003;</div><h3>You are in.</h3><p style="margin-bottom:0;">In the real product, your four worlds would now be connected.</p></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function $(id){return document.getElementById(id);}
+  var seen={};
+
+  // theme
+  var sun='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>';
+  var moon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>';
+  function syncTheme(){ $('themeBtn').innerHTML = document.documentElement.getAttribute('data-theme')==='dark'?sun:moon; }
+  syncTheme();
+  $('themeBtn').addEventListener('click',function(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(d)document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme','dark'); syncTheme(); });
+
+  // router
+  function route(id){ document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('active',v.id===id);}); document.querySelectorAll('.rbtn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-route')===id);}); window.scrollTo({top:0,behavior:'auto'}); if(id==='v-dash') dashGo(); }
+  document.querySelectorAll('[data-route]').forEach(function(b){ b.addEventListener('click',function(){route(b.getAttribute('data-route'));}); });
+
+  // dashboard tab jumps from anywhere
+  function dtab(id){ route('v-dash'); document.querySelectorAll('.dtab').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-tab')===id);}); document.querySelectorAll('.dash-panel').forEach(function(p){p.classList.toggle('active',p.id===id);}); }
+  document.querySelectorAll('.dtab').forEach(function(t){ t.addEventListener('click',function(){ dtab(t.getAttribute('data-tab')); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }); });
+  document.querySelectorAll('.qc[data-tab]').forEach(function(q){ q.addEventListener('click',function(){ dtab(q.getAttribute('data-tab')); }); });
+
+  // hero ring
+  setTimeout(function(){ var r=$('hring'),s=$('hscore'); if(r)r.classList.add('go'); if(!s)return; if(reduce){s.textContent='82';return;} var st=null; function step(ts){if(!st)st=ts;var p=Math.min((ts-st)/1600,1);s.textContent=Math.round((1-Math.pow(1-p,3))*82);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step); },300);
+
+  // biomarkers data
+  var bms=[
+    {c:'Heart',n:'ApoB',v:'78',u:'mg/dL',st:'optimal',zl:0,zr:35,m:40,tr:'\u2193 9%',d:'The best single marker of heart-disease risk. Strong.',a:'Keep going.'},
+    {c:'Heart',n:'LDL-C',v:'96',u:'mg/dL',st:'watch',zl:0,zr:40,m:66,tr:'\u2191 6%',d:'Close to optimal but drifting up.',a:'Swap saturated fat for olive oil and nuts.'},
+    {c:'Metabolic',n:'HbA1c',v:'5.2',u:'%',st:'optimal',zl:0,zr:45,m:32,tr:'\u2192',d:'Three-month blood sugar. Excellent control.',a:'A real strength.'},
+    {c:'Metabolic',n:'Insulin',v:'5.4',u:'\u00b5IU/mL',st:'optimal',zl:0,zr:50,m:28,tr:'\u2193 4%',d:'Low insulin means high sensitivity.',a:'Walks are working.'},
+    {c:'Inflammation',n:'hs-CRP',v:'0.6',u:'mg/L',st:'optimal',zl:0,zr:55,m:22,tr:'\u2192',d:'Hidden inflammation, low.',a:'Nothing to change.'},
+    {c:'Nutrients',n:'Vitamin D',v:'31',u:'ng/mL',st:'watch',zl:45,zr:10,m:32,tr:'\u2193 12%',d:'Just below optimal, common in winter.',a:'2,000 IU daily with a meal.'},
+    {c:'Nutrients',n:'Omega-3',v:'4.8',u:'%',st:'attention',zl:60,zr:0,m:26,tr:'new',d:'Tied to heart and brain aging. Needs attention.',a:'Fatty fish twice a week or 2g EPA/DHA daily.'},
+    {c:'Hormones',n:'TSH',v:'2.1',u:'mIU/L',st:'optimal',zl:15,zr:35,m:48,tr:'\u2192',d:'Thyroid setpoint, healthy middle.',a:'No action needed.'},
+    {c:'Hormones',n:'Cortisol',v:'14',u:'\u00b5g/dL',st:'optimal',zl:20,zr:30,m:44,tr:'\u2193 8%',d:'Morning stress hormone, well regulated.',a:'Sleep is helping.'}
+  ];
+  var labels={optimal:'Optimal',watch:'Watch',attention:'Attention'};
+  function bmCard(b){ return '<article class="bm" data-cat="'+b.c+'"><button class="bmh"><div class="cat">'+b.c+'</div><div class="nm">'+b.n+' <span class="pill2 '+b.st+'">'+labels[b.st]+'</span></div><div class="v">'+b.v+'<small>'+b.u+'</small></div><div class="rb"><div class="rz" style="left:'+b.zl+'%;right:'+b.zr+'%;"></div><div class="rm" style="left:'+b.m+'%;"></div></div><div class="trend">'+b.tr+' since last test</div></button><div class="bm-more"><div class="bm-more-in"><div class="bm-more-pad"><p>'+b.d+'</p><div class="bm-act">'+b.a+'</div></div></div></div></article>'; }
+  function fillBm(el){ el.innerHTML=bms.map(bmCard).join(''); el.querySelectorAll('.bmh').forEach(function(h){ h.addEventListener('click',function(){h.closest('.bm').classList.toggle('open');}); }); }
+  fillBm($('hbm')); fillBm($('dbm'));
+  function wireFilter(fid,gid){ var g=$(gid); document.querySelectorAll('#'+fid+' .filter').forEach(function(f){ f.addEventListener('click',function(){ document.querySelectorAll('#'+fid+' .filter').forEach(function(x){x.classList.remove('active');}); f.classList.add('active'); var c=f.getAttribute('data-f'); g.querySelectorAll('.bm').forEach(function(card){ var show=c==='all'||card.getAttribute('data-cat')===c; card.classList.toggle('hidden',!show); card.classList.remove('open'); }); }); }); }
+  wireFilter('hfilters','hbm'); wireFilter('dfilters','dbm');
+
+  // chart
+  var scores=[{s:68,l:'Jun 25'},{s:73,l:'Sep 25'},{s:76,l:'Dec 25'},{s:79,l:'Jan 26'},{s:82,l:'Mar 26'}];
+  (function(){ var W=600,H=240,padY=30,min=60,max=90,n=scores.length;
+    var xs=scores.map(function(_,i){return 20+i*((W-40)/(n-1));});
+    var ys=scores.map(function(d){return H-padY-((d.s-min)/(max-min))*(H-padY*2);});
+    var line=xs.map(function(x,i){return (i?'L':'M')+x.toFixed(1)+' '+ys[i].toFixed(1);}).join(' ');
+    $('line-p').setAttribute('d',line); $('area-p').setAttribute('d',line+' L'+xs[n-1]+' '+H+' L'+xs[0]+' '+H+' Z');
+    var dots=$('dots'),xl=$('xl'),tt=$('tt'),wrap=$('cw');
+    scores.forEach(function(d,i){ var c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('class','dot');c.setAttribute('cx',xs[i]);c.setAttribute('cy',ys[i]);c.setAttribute('r','5');
+      c.addEventListener('mouseenter',function(){var r=wrap.getBoundingClientRect();tt.textContent='Score '+d.s+' \u00b7 '+d.l;tt.style.left=(xs[i]/W*r.width)+'px';tt.style.top=(ys[i]/H*r.height)+'px';tt.classList.add('show');});
+      c.addEventListener('mouseleave',function(){tt.classList.remove('show');}); dots.appendChild(c);
+      var tx=document.createElementNS('http://www.w3.org/2000/svg','text');tx.setAttribute('class','xl');tx.setAttribute('x',xs[i]);tx.setAttribute('y',H-6);tx.setAttribute('text-anchor','middle');tx.textContent=d.l;xl.appendChild(tx); });
+  })();
+
+  // plan
+  var actions=[{t:'Add omega-3',d:'Fatty fish twice a week, or 2g EPA/DHA daily.',im:'high',imt:'High impact'},{t:'Top up vitamin D',d:'2,000 IU daily with a meal.',im:'med',imt:'Medium'},{t:'Nudge LDL down',d:'Swap saturated fat for olive oil and nuts.',im:'med',imt:'Medium'}];
+  function renderPlan(){ var c=$('planMini'); if(!c)return; c.innerHTML='';
+    actions.forEach(function(a){ var row=document.createElement('div'); row.className='plan-item';
+      row.innerHTML='<button class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></button><div class="plan-body"><b>'+a.t+'</b><span class="impact '+a.im+'">'+a.imt+'</span><p>'+a.d+'</p></div>';
+      var chk=row.querySelector('.check'),body=row.querySelector('.plan-body'); if(a.checked){chk.classList.add('done');body.classList.add('done');}
+      chk.addEventListener('click',function(){a.checked=!a.checked;var done=actions.filter(function(x){return x.checked;}).length;$('pcount').textContent=actions.length+' actions \u00b7 '+done+' done';renderPlan();});
+      c.appendChild(row); }); }
+  renderPlan();
+
+  // pharmacy rx
+  var rx=[{n:'Atorvastatin',d:'10mg, once daily',next:'Refill in 5 days',s:'due'},{n:'Vitamin D',d:'2,000 IU, once daily',next:'Refill in 22 days',s:'ok'},{n:'Omega-3',d:'1g, twice daily',next:'New, ships Tuesday',s:'ok'}];
+  function renderRx(){ var c=$('rxList'); c.innerHTML='';
+    rx.forEach(function(r){ var row=document.createElement('div'); row.className='row-item';
+      row.innerHTML='<div class="ri-main"><b>'+r.n+'</b><span>'+r.d+' &middot; '+r.next+'</span></div>';
+      var btn=document.createElement('button'); btn.className='mini-btn'+(r.req?' done':(r.s==='ok'?' ghost':''));
+      btn.textContent=r.req?'Refill requested':'Request refill';
+      btn.addEventListener('click',function(){ if(r.req)return; r.req=true; renderRx(); });
+      row.appendChild(btn); c.appendChild(row); }); }
+  renderRx();
+  var otc=[{n:'Omega-3 (EPA/DHA)',d:'Recommended from your labs',p:'$18'},{n:'Vitamin D3',d:'To reach your optimal range',p:'$9'}];
+  function renderOtc(){ var c=$('otcList'); c.innerHTML='';
+    otc.forEach(function(o){ var row=document.createElement('div'); row.className='row-item';
+      row.innerHTML='<div class="ri-main"><b>'+o.n+'</b><span>'+o.d+'</span></div><div class="ri-right"><div class="amt" style="font-size:1rem;">'+o.p+'</div></div>';
+      var btn=document.createElement('button'); btn.className='mini-btn'+(o.added?' done':''); btn.textContent=o.added?'Added':'Add'; btn.style.marginLeft='10px';
+      btn.addEventListener('click',function(){ if(o.added)return; o.added=true; renderOtc(); });
+      row.appendChild(btn); c.appendChild(row); }); }
+  renderOtc();
+
+  // care message
+  $('msgSend').addEventListener('click',function(){ var i=$('msgIn'); if(!i.value.trim())return; var b=document.createElement('div'); b.style.cssText='align-self:flex-end;background:var(--brand);color:#fff;border-radius:13px;border-bottom-right-radius:4px;padding:11px 13px;font-size:.9rem;max-width:85%;'; b.textContent=i.value; $('thread').appendChild(b); i.value=''; setTimeout(function(){ var r=document.createElement('div'); r.style.cssText='align-self:flex-start;background:var(--surface-2);border-radius:13px;border-bottom-left-radius:4px;padding:11px 13px;font-size:.9rem;max-width:85%;'; r.textContent='Got it, thanks Maya. A nurse will follow up shortly.'; $('thread').appendChild(r); },700); });
+
+  // dash ring on first open
+  function dashGo(){ if(seen.d)return; seen.d=true; var r=$('dring'),s=$('dsnum'); if(r)r.classList.add('go'); if(!s)return; if(reduce){s.textContent='82';return;} var st=null; function step(ts){if(!st)st=ts;var p=Math.min((ts-st)/1400,1);s.textContent=Math.round((1-Math.pow(1-p,3))*82);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step); }
+
+  // modal
+  var modal=$('modal');
+  function openM(plan){ $('mform').classList.remove('hidden'); $('mdone').classList.add('hidden'); var t=$('mtitle'),s=$('msubt');
+    if(plan==='join'||!plan){t.textContent='Join Aevia';s.textContent='Enter your email and we will connect your insurance, pharmacy, labs and care.';}
+    else if(plan==='Book a visit'||plan==='Reschedule your visit'){t.textContent=plan;s.textContent='Enter your email and we will confirm your appointment details.';}
+    else {t.textContent='You chose '+plan;s.textContent='Enter your email and we will set up your '+plan+' membership.';}
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); var em=$('memail'); if(em){em.value='';em.style.borderColor='';setTimeout(function(){em.focus();},80);} }
+  function closeM(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  $('mx').addEventListener('click',closeM); modal.addEventListener('click',function(e){if(e.target===modal)closeM();}); document.addEventListener('keydown',function(e){if(e.key==='Escape')closeM();});
+  $('msubmit').addEventListener('click',function(){ var em=$('memail'); if(em&&em.value.trim()===''){em.style.borderColor='var(--alert)';em.focus();return;} $('mform').classList.add('hidden'); $('mdone').classList.remove('hidden'); });
+  $('ctaBtn').addEventListener('click',function(){openM('join');});
+  document.querySelectorAll('[data-open]').forEach(function(b){ b.addEventListener('click',function(){ openM(b.getAttribute('data-open')); }); });
+
+  // ===== chatbot =====
+  var fab=$('fab'), chatw=$('chatw'), cbody=$('cbody');
+  function openChat(){ chatw.classList.add('open'); fab.classList.add('hidden'); setTimeout(function(){$('cin').focus();},120); }
+  function closeChat(){ chatw.classList.remove('open'); fab.classList.remove('hidden'); }
+  fab.addEventListener('click',openChat); $('cx').addEventListener('click',closeChat);
+  function cadd(text,who,src){ var m=document.createElement('div'); m.className='cmsg '+who; m.innerHTML=text+(src?'<div class="csrc">'+src+'</div>':''); cbody.appendChild(m); cbody.scrollTop=cbody.scrollHeight; }
+  function typing(on){ var t=$('ctyperow'); if(on){ if(t)return; var d=document.createElement('div'); d.className='ctype'; d.id='ctyperow'; d.innerHTML='<span></span><span></span><span></span>'; cbody.appendChild(d); cbody.scrollTop=cbody.scrollHeight; } else if(t){ t.remove(); } }
+  function reply(q){
+    q=q.toLowerCase();
+    function has(){ for(var i=0;i<arguments.length;i++){ if(q.indexOf(arguments[i])>-1) return true; } return false; }
+    if(has('cover','covered','cost','owe','price','how much') && has('visit','specialist','doctor','appointment','rivera') || (q.indexOf('covered')>-1))
+      return {t:"Yes, your specialist visit with Dr. Rivera is covered. Your share is <b>$35</b>, because you have met most of your deductible.",s:"From your plan"};
+    if(has('refill','statin','atorvastatin','medic','pharmacy','prescription'))
+      return {t:"I can request your <b>Atorvastatin</b> refill now. It would arrive Tuesday with your Vitamin D, free delivery. Just say the word and I will send it to pharmacy.",s:"From your pharmacy"};
+    if(has('omega','omega-3','omega 3'))
+      return {t:"Your omega-3 index came back at <b>4.8%</b>, which is low, and it is tied to heart and brain aging. The fix is simple: fatty fish twice a week, or a 2g EPA/DHA supplement I can add to your next delivery.",s:"From your labs"};
+    if(has('vitamin d','vit d'))
+      return {t:"Your Vitamin D is <b>31 ng/mL</b>, just below optimal, common in winter. 2,000 IU daily with a meal should bring it up. Want me to add it to your cart?",s:"From your labs"};
+    if(has('deductible'))
+      return {t:"You have met <b>$1,200 of your $1,500</b> deductible, so most visits are low cost from here.",s:"From your plan"};
+    if(has('claim'))
+      return {t:"Your $35 specialist visit is <b>processing</b>. Your recent lab panel and a pharmacy fill were both fully covered.",s:"From your plan"};
+    if(has('book','schedule','appointment','visit','doctor','care','video'))
+      return {t:"Your next visit is <b>Thursday, Jun 12 at 10:00am</b> with Dr. Rivera, by video. I can reschedule it or book a same-day visit, usually within the hour. Which would you like?",s:"From your care team"};
+    if(has('score','health','how am i','overall'))
+      return {t:"Your Aevia score is <b>82</b>, up 4 points this quarter. Your metabolic and heart markers are strong. Nutrients are the one thing holding it back, mainly that omega-3.",s:"From your dashboard"};
+    if(has('hi','hello','hey'))
+      return {t:"Hi Maya. I can help with your coverage, prescriptions, lab results, or care. What is on your mind?"};
+    if(has('thank'))
+      return {t:"Anytime. I am here whenever you need me."};
+    return {t:"I can help with your <b>coverage</b>, <b>prescriptions</b>, <b>lab results</b>, or <b>care</b>. Try one of the suggestions below, or ask in your own words."};
+  }
+  function send(text){
+    if(!text.trim())return; cadd(text,'user'); $('cin').value=''; typing(true);
+    setTimeout(function(){ typing(false); var r=reply(text); cadd(r.t,'bot',r.s); }, 650+Math.random()*400);
+  }
+  $('csend').addEventListener('click',function(){ send($('cin').value); });
+  $('cin').addEventListener('keydown',function(e){ if(e.key==='Enter') send($('cin').value); });
+  document.querySelectorAll('.cchip').forEach(function(c){ c.addEventListener('click',function(){ send(c.textContent); }); });
+
+  // ===== video call =====
+  var callov=$('callov'), ctimer=null, csecs=0;
+  function fmt(n){return (n<10?'0':'')+n;}
+  function joinCall(){
+    callov.classList.add('open'); $('ctimer').textContent='Connecting'; $('cstatus').textContent='Connecting you now'; csecs=0;
+    $('cmic').classList.remove('off'); $('ccam').classList.remove('off');
+    setTimeout(function(){ $('cstatus').innerHTML='<span class="live"></span> Connected'; ctimer=setInterval(function(){ csecs++; $('ctimer').textContent=fmt(Math.floor(csecs/60))+':'+fmt(csecs%60); },1000); }, 1600);
+  }
+  function endCall(){ callov.classList.remove('open'); if(ctimer){clearInterval(ctimer);ctimer=null;} }
+  if($('joinCall')) $('joinCall').addEventListener('click',joinCall);
+  $('cend').addEventListener('click',endCall);
+  $('cmic').addEventListener('click',function(){this.classList.toggle('off');});
+  $('ccam').addEventListener('click',function(){this.classList.toggle('off');});
+  callov.addEventListener('click',function(e){ if(e.target===callov) endCall(); });
+
+  // ===== scheduler =====
+  var schov=$('schov'), schm=$('schm');
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var MONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var DOWS=['S','M','T','W','T','F','S'];
+  var slots=['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+  var cal={y:0,m:0,sel:null,time:null,mode:'reschedule'};
+  function openSched(mode){ cal.mode=mode; var n=new Date(); cal.y=n.getFullYear(); cal.m=n.getMonth(); cal.sel=null; cal.time=null; renderSched(); schov.classList.add('open'); }
+  function closeSched(){ schov.classList.remove('open'); }
+  function renderSched(){
+    var now=new Date(); now.setHours(0,0,0,0);
+    var first=new Date(cal.y,cal.m,1).getDay();
+    var days=new Date(cal.y,cal.m+1,0).getDate();
+    var title=cal.mode==='book'?'Book a visit':'Reschedule your visit';
+    var canPrev=!(cal.y===now.getFullYear()&&cal.m===now.getMonth());
+    var html='<button class="schx" id="schx" aria-label="Close">&times;</button>';
+    html+='<p class="mk" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:600;margin:0 0 6px;">Aevia Care &middot; video visit</p>';
+    html+='<h3 style="font-family:var(--disp);font-weight:400;font-size:1.7rem;margin:0;">'+title+'</h3>';
+    html+='<div class="cal-head"><button class="cal-nav" id="calPrev"'+(canPrev?'':' disabled')+'>&lsaquo;</button><b>'+MON[cal.m]+' '+cal.y+'</b><button class="cal-nav" id="calNext">&rsaquo;</button></div>';
+    html+='<div class="cal-grid">';
+    DOWS.forEach(function(d){ html+='<div class="cal-dow">'+d+'</div>'; });
+    for(var i=0;i<first;i++){ html+='<button class="cal-day empty" disabled></button>'; }
+    for(var d=1;d<=days;d++){
+      var dt=new Date(cal.y,cal.m,d); var past=dt<now; var isToday=dt.getTime()===now.getTime();
+      var selc=(cal.sel&&cal.sel.getTime()===dt.getTime())?' sel':'';
+      html+='<button class="cal-day'+(isToday?' today':'')+selc+'" data-d="'+d+'"'+(past?' disabled':'')+'>'+d+'</button>';
+    }
+    html+='</div>';
+    html+='<div class="slab">Available times'+(cal.sel?' &middot; '+DOW[cal.sel.getDay()]+', '+MONS[cal.sel.getMonth()]+' '+cal.sel.getDate():'')+'</div>';
+    html+='<div class="times">';
+    slots.forEach(function(t){ html+='<button class="tslot'+(cal.time===t?' sel':'')+'" data-t="'+t+'"'+(cal.sel?'':' disabled style="opacity:.4;cursor:not-allowed;"')+'>'+t+'</button>'; });
+    html+='</div>';
+    html+='<button class="sconf" id="sconf"'+((cal.sel&&cal.time)?'':' disabled')+'>Confirm visit</button>';
+    schm.innerHTML=html;
+    $('schx').addEventListener('click',closeSched);
+    $('calPrev').addEventListener('click',function(){ if(this.disabled)return; cal.m--; if(cal.m<0){cal.m=11;cal.y--;} cal.sel=null; cal.time=null; renderSched(); });
+    $('calNext').addEventListener('click',function(){ cal.m++; if(cal.m>11){cal.m=0;cal.y++;} cal.sel=null; cal.time=null; renderSched(); });
+    schm.querySelectorAll('.cal-day[data-d]').forEach(function(b){ b.addEventListener('click',function(){ if(b.disabled)return; cal.sel=new Date(cal.y,cal.m,parseInt(b.getAttribute('data-d'),10)); cal.time=null; renderSched(); }); });
+    schm.querySelectorAll('.tslot[data-t]').forEach(function(b){ b.addEventListener('click',function(){ if(!cal.sel)return; cal.time=b.getAttribute('data-t'); renderSched(); }); });
+    var sc=$('sconf'); if(sc) sc.addEventListener('click',function(){ if(!(cal.sel&&cal.time))return; confirmSched(); });
+  }
+  function confirmSched(){
+    var when='Video visit &middot; '+DOW[cal.sel.getDay()]+', '+MONS[cal.sel.getMonth()]+' '+cal.sel.getDate()+', '+cal.time;
+    if(cal.mode==='reschedule' && $('visitWhen')) $('visitWhen').innerHTML=when;
+    schm.innerHTML='<div class="sdone"><div class="tk">&#10003;</div><h3 style="font-family:var(--disp);font-weight:400;font-size:1.6rem;margin:0 0 8px;">'+(cal.mode==='book'?'Visit booked':'Visit rescheduled')+'</h3><p style="color:var(--text-2);margin:0 0 18px;">'+DOW[cal.sel.getDay()]+', '+MONS[cal.sel.getMonth()]+' '+cal.sel.getDate()+' at '+cal.time+' with Dr. Rivera.</p><button class="sconf" id="sdclose" style="max-width:200px;margin:0 auto;">Done</button></div>';
+    $('sdclose').addEventListener('click',closeSched);
+  }
+  document.querySelectorAll('[data-sched]').forEach(function(b){ b.addEventListener('click',function(){ openSched(b.getAttribute('data-sched')); }); });
+
+  // ===== design system (white-label + components) =====
+
+(function(){
+  function $(id){return document.getElementById(id);}
+  var root=document.documentElement;
+
+  // theme
+  
+  var moon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>';
+  
+  
+
+  // white-label
+  function setBrand(a,b){ root.style.setProperty('--brand',a); root.style.setProperty('--brand-2',b); }
+  document.querySelectorAll('.sw[data-brand]').forEach(function(s){ s.addEventListener('click',function(){ document.querySelectorAll('.sw').forEach(function(x){x.classList.remove('on');}); s.classList.add('on'); var p=s.getAttribute('data-brand').split('|'); setBrand(p[0],p[1]); $('custom').value=p[0]; }); });
+  $('custom').addEventListener('input',function(){ document.querySelectorAll('.sw').forEach(function(x){x.classList.remove('on');}); var c=this.value; setBrand(c, c); root.style.setProperty('--brand-2','color-mix(in srgb,'+c+' 70%, white)'); });
+  var fonts={ed:["'Instrument Serif',serif","'Space Grotesk',sans-serif"],modern:["'Sora',sans-serif","'Inter',sans-serif"],warm:["'Fraunces',serif","'Manrope',sans-serif"]};
+  document.querySelectorAll('.opt[data-font]').forEach(function(o){ o.addEventListener('click',function(){ document.querySelectorAll('.opt[data-font]').forEach(function(x){x.classList.remove('on');}); o.classList.add('on'); var f=fonts[o.getAttribute('data-font')]; root.style.setProperty('--disp',f[0]); root.style.setProperty('--sans',f[1]); }); });
+  document.querySelectorAll('.opt[data-r]').forEach(function(o){ o.addEventListener('click',function(){ document.querySelectorAll('.opt[data-r]').forEach(function(x){x.classList.remove('on');}); o.classList.add('on'); root.style.setProperty('--r',o.getAttribute('data-r')+'px'); }); });
+  document.querySelectorAll('.opt[data-pad]').forEach(function(o){ o.addEventListener('click',function(){ document.querySelectorAll('.opt[data-pad]').forEach(function(x){x.classList.remove('on');}); o.classList.add('on'); root.style.setProperty('--pad',o.getAttribute('data-pad')+'px'); }); });
+
+  // interactions
+  document.querySelectorAll('[data-check]').forEach(function(c){ c.addEventListener('click',function(){c.classList.toggle('on');}); });
+  document.querySelectorAll('[data-radiogrp]').forEach(function(g){ g.querySelectorAll('.radio').forEach(function(r){ r.addEventListener('click',function(){ g.querySelectorAll('.radio').forEach(function(x){x.classList.remove('on');}); r.classList.add('on'); }); }); });
+  document.querySelectorAll('[data-switch]').forEach(function(s){ s.addEventListener('click',function(){s.classList.toggle('on');}); });
+  document.querySelectorAll('[data-seg]').forEach(function(g){ g.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ g.querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); }); }); });
+  document.querySelectorAll('#bgrp button').forEach(function(b){ b.addEventListener('click',function(){ b.parentNode.querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); }); });
+  document.querySelectorAll('[data-stepper]').forEach(function(g){ var v=g.querySelector('.val'); g.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var n=Math.max(0,parseInt(v.textContent,10)+parseInt(b.getAttribute('data-s'),10)); v.textContent=n; }); }); });
+  document.querySelectorAll('[data-pin] input').forEach(function(inp,i,all){ inp.addEventListener('input',function(){ if(inp.value&&all[i+1])all[i+1].focus(); }); inp.addEventListener('keydown',function(e){ if(e.key==='Backspace'&&!inp.value&&all[i-1])all[i-1].focus(); }); });
+  document.querySelectorAll('[data-tabs]').forEach(function(t){ t.querySelectorAll('.th button').forEach(function(b){ b.addEventListener('click',function(){ t.querySelectorAll('.th button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); var i=b.getAttribute('data-t'); t.querySelectorAll('[data-tp]').forEach(function(p){ p.hidden=p.getAttribute('data-tp')!==i; }); }); }); });
+  document.querySelectorAll('[data-page] button').forEach(function(b){ b.addEventListener('click',function(){ if(!/[0-9]/.test(b.textContent))return; b.parentNode.querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); }); });
+  document.querySelectorAll('[data-acc] .ah').forEach(function(h){ h.addEventListener('click',function(){ h.closest('.ai').classList.toggle('open'); }); });
+  document.querySelectorAll('[data-stars] button').forEach(function(b){ b.addEventListener('click',function(){ var i=+b.getAttribute('data-i'); b.parentNode.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', +x.getAttribute('data-i')<=i); }); }); });
+  // preset a rating
+  document.querySelectorAll('[data-stars] button').forEach(function(b){ if(+b.getAttribute('data-i')<=4)b.classList.add('on'); });
+
+  // charts
+  function line(id,vals,W,H){ var min=Math.min.apply(0,vals),max=Math.max.apply(0,vals),n=vals.length,pad=10;
+    var xs=vals.map(function(_,i){return pad+i*((W-2*pad)/(n-1));}); var ys=vals.map(function(v){return H-pad-((v-min)/(max-min||1))*(H-2*pad);});
+    var d=xs.map(function(x,i){return (i?'L':'M')+x.toFixed(1)+' '+ys[i].toFixed(1);}).join(' ');
+    var svg=$(id); svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.innerHTML='<path class="ar" d="'+d+' L'+xs[n-1]+' '+H+' L'+xs[0]+' '+H+' Z"/><path class="lp" d="'+d+'"/>'+xs.map(function(x,i){return '<circle cx="'+x+'" cy="'+ys[i]+'" r="3" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>';}).join('');
+  }
+  function bars(id,vals,W,H){ var max=Math.max.apply(0,vals),n=vals.length,pad=8,gap=6,bw=(W-2*pad-(n-1)*gap)/n; var svg=$(id); svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.innerHTML=vals.map(function(v,i){var h=(v/max)*(H-2*pad);return '<rect class="bar" x="'+(pad+i*(bw+gap))+'" y="'+(H-pad-h)+'" width="'+bw+'" height="'+h+'" rx="3"/>';}).join('');
+  }
+  line('lineC',[68,73,71,79,76,82],260,110); bars('barC',[40,62,48,75,58,88],260,110);
+
+  // mini calendar
+  (function(){ var g=$('miniCal'); var dw=['S','M','T','W','T','F','S']; var html=dw.map(function(d){return '<div class="dw">'+d+'</div>';}).join('');
+    for(var i=0;i<1;i++)html+='<div></div>'; for(var d=1;d<=30;d++)html+='<div class="d'+(d===12?' on':'')+'">'+d+'</div>'; g.innerHTML=html;
+    g.querySelectorAll('.d').forEach(function(c){ c.addEventListener('click',function(){ g.querySelectorAll('.d').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); }); });
+  })();
+
+  // toast
+  $('toastBtn').addEventListener('click',function(){ var t=$('toast'); t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2200); });
+  // modal
+  function om(){$('modalOv').classList.add('open');} function cm(){$('modalOv').classList.remove('open');}
+  $('modalBtn').addEventListener('click',om); $('modalNo').addEventListener('click',cm); $('modalOk').addEventListener('click',function(){ cm(); var t=$('toast'); t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2200); }); $('modalOv').addEventListener('click',function(e){if(e.target===$('modalOv'))cm();});
+  // drop
+  $('drop').addEventListener('click',function(){ this.innerHTML='<b style="color:var(--brand)">results.pdf uploaded</b>'; });
+  // command palette
+  var items=['Refill Atorvastatin','View omega-3 result','Book a video visit','Check my deductible','Message care team','See recent claims','Update my address'];
+  function oc(){ $('cmdOv').classList.add('open'); renderCmd(''); setTimeout(function(){$('cmdIn').focus();},100); }
+  function cc(){ $('cmdOv').classList.remove('open'); $('cmdIn').value=''; }
+  function renderCmd(q){ var l=$('cmdList'); var f=items.filter(function(x){return x.toLowerCase().indexOf(q.toLowerCase())>-1;}); l.innerHTML=f.map(function(x,i){return '<button class="'+(i===0?'on':'')+'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg> '+x+'</button>';}).join('')||'<div style="padding:12px;color:var(--text-3);font-size:.85rem">No matches</div>'; l.querySelectorAll('button').forEach(function(b){b.addEventListener('click',cc);}); }
+  $('cmdBtn').addEventListener('click',oc); $('cmdIn').addEventListener('input',function(){renderCmd(this.value);}); $('cmdOv').addEventListener('click',function(e){if(e.target===$('cmdOv'))cc();});
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){cc();cm();} if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();oc();} });
+
+  // fill spacing + icons + iconbtns placeholders were baked as text; build now
+})();
+
+
+  schov.addEventListener('click',function(e){ if(e.target===schov) closeSched(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeSched(); endCall(); } });
+
+
+})();
+</script>
+</body>
+</html>
